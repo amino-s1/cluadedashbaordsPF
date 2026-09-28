@@ -1013,7 +1013,7 @@ function ncConfigs(J){
   {id:'nc11',num:'11',title:'Verified income, last month and current month',sub:'Daily median AltitudeIncome, Saudi vs Expat.',rows:ID.filter(d=>d.date>=lmStart),kind:'money',
    series:()=>[ncV('Saudi verified (median)',C.g,d=>d.sau_med),ncV('Expat verified (median)',C.b,d=>d.exp_med)],
    callout:'<p><b>Read:</b> a close-up of card 10 for the last two calendar months.</p>'},
-  {id:'nc12',num:'12',title:'Submission Source Trend',sub:'Daily share of submissions by SubmitSource -- every real value shown as its own line, no merging.',rows:T,kind:'pct',
+  {id:'nc12',num:'12',title:'Submission Source Trend',sub:'Daily share of submissions by SubmitSource -- every real value shown as its own line, no merging.',rows:T,kind:'pct',changeLabel:'MOF/GOSI Journey Change',
    series:()=>[ncS('UI',C.g,d=>d.ss_ui,d=>d.subs),ncS('Backoffice',C.b,d=>d.ss_backoffice,d=>d.subs),ncS('Android',C.v,d=>d.ss_android,d=>d.subs),ncS('Android-S',C.v,d=>d.ss_android_s,d=>d.subs,true),ncS('iOS (IOS-S)',C.a,d=>d.ss_ios,d=>d.subs)],
    callout:'<p><b>Read:</b> share of daily submissions coming from each channel, one line per real SubmitSource value in the data -- UI, backoffice, Android, Android-S (dashed, same color family as Android since both are the Android app), and iOS. UI and backoffice make up almost all volume; the three app channels are a small, recent slice of it. A handful of rows elsewhere in the full history have a blank SubmitSource (none in this window), so no line is drawn for that.</p>'}
   ];
@@ -1053,7 +1053,7 @@ function ncSvg(cfg,J,ser){
   const step=Math.max(1,Math.ceil(n/9));
   rows.forEach((d,i)=>{if(i%step===0||i===n-1)g+='<text x="'+X(i)+'" y="'+(H-9)+'" text-anchor="middle" font-size="10.5" fill="#8493a8">'+prettyD(d.date)+'</text>';});
   const ci=rows.findIndex(d=>d.date>=J.changeDate);
-  if(ci>=0)g+='<line x1="'+X(ci)+'" x2="'+X(ci)+'" y1="'+Tp+'" y2="'+(H-B)+'" stroke="#0b6b34" stroke-width="1.5" stroke-dasharray="5 4"/><text x="'+(X(ci)+5)+'" y="'+(Tp-7)+'" font-size="11" font-weight="600" fill="#0b6b34">Journey change</text>';
+  if(ci>=0)g+='<line x1="'+X(ci)+'" x2="'+X(ci)+'" y1="'+Tp+'" y2="'+(H-B)+'" stroke="#0b6b34" stroke-width="1.5" stroke-dasharray="5 4"/><text x="'+(X(ci)+5)+'" y="'+(Tp-7)+'" font-size="11" font-weight="600" fill="#0b6b34">'+ncEsc(cfg.changeLabel||'Journey change')+'</text>';
   ser.forEach(s=>{
     let p='',open=false;const pts=[];
     rows.forEach((d,i)=>{const v=s.get(d);if(v==null||!isFinite(v)){open=false;return;}p+=(open?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1)+' ';open=true;pts.push([i,v]);});
@@ -1075,7 +1075,7 @@ function ncCsv(cfg){
 function ncPaint(cfg,J){
   const el=document.getElementById(cfg.id),ser=cfg.series();
   el.querySelector('.nc-chart').innerHTML=ncSvg(cfg,J,ser);
-  el.querySelector('.nc-legend').innerHTML=ser.map(s=>'<span><i class="'+(s.dash?'d':'')+'" style="border-color:'+s.color+'"></i>'+ncEsc(s.label)+'</span>').join('')+(cfg.trend?'<span><i style="border-top-style:dotted;border-color:#5b6b83"></i>Trend</span>':'')+'<span><i class="d" style="border-color:#0b6b34"></i>Journey change (10 Sep)</span>';
+  el.querySelector('.nc-legend').innerHTML=ser.map(s=>'<span><i class="'+(s.dash?'d':'')+'" style="border-color:'+s.color+'"></i>'+ncEsc(s.label)+'</span>').join('')+(cfg.trend?'<span><i style="border-top-style:dotted;border-color:#5b6b83"></i>Trend</span>':'')+'<span><i class="d" style="border-color:#0b6b34"></i>'+ncEsc(cfg.changeLabel||'Journey change')+' (10 Sep)</span>';
   el.querySelector('.nc-delta-slot').innerHTML=ncDelta(cfg,J,ser);
 }
 /* ============ New change: listed/unlisted, cost, employer benefit, insights ============ */
