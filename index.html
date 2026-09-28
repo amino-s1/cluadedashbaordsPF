@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tasheel · Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef1f7;--panel:#fff;--line:rgba(30,45,75,.10);--line2:rgba(30,45,75,.17);
+ --ink:#141c2b;--ink2:#3a475e;--muted:#5b6b83;--faint:#8493a8;
+ --cyan:#0e9e90;--cyan-d:#0b7d72;--gold:#bd7d12;--gold-d:#9a6410;--violet:#6f5be0;}
+*{box-sizing:border-box}html,body{margin:0;padding:0;height:100%}
+body{min-height:100%;background:radial-gradient(1200px 700px at 82% -12%,rgba(14,158,144,.10),transparent 60%),radial-gradient(1000px 600px at -5% 5%,rgba(189,125,18,.09),transparent 55%),var(--bg);
+ color:var(--ink);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+h1,h2,h3,.disp{font-family:'Space Grotesk',sans-serif}
+header{padding:22px 30px;display:flex;align-items:center;gap:13px}
+.logo{width:40px;height:40px;border-radius:11px;position:relative;background:conic-gradient(from 210deg,var(--cyan),var(--gold),var(--cyan));box-shadow:0 8px 26px -8px rgba(14,158,144,.55)}
+.logo::after{content:"";position:absolute;inset:5px;border-radius:7px;background:#fff}
+.logo::before{content:"↗";position:absolute;inset:0;display:grid;place-items:center;z-index:2;font-family:'Space Grotesk';font-weight:700;color:var(--cyan);font-size:20px}
+.brand .t{font-family:'Space Grotesk';font-weight:700;font-size:18px}
+.brand .s{font-size:11px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-top:1px}
+main{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:24px 26px 60px;max-width:1280px;margin:0 auto;width:100%}
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:20px;width:100%}
+@media(max-width:1000px){.cards{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:700px){.cards{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:420px){.cards{grid-template-columns:1fr}}
+
+.pcard{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:32px 24px 28px;cursor:pointer;
+ text-decoration:none;color:inherit;transition:.22s cubic-bezier(.4,0,.2,1);box-shadow:0 2px 4px rgba(20,30,50,.04),0 18px 40px -24px rgba(20,30,50,.4);overflow:hidden;
+ display:flex;flex-direction:column;align-items:center;text-align:center}
+.pcard:hover{transform:translateY(-4px);border-color:var(--line2);box-shadow:0 2px 4px rgba(20,30,50,.04),0 30px 60px -26px rgba(20,30,50,.5)}
+.pcard .card-icon{width:72px;height:72px;border-radius:18px;display:grid;place-items:center;margin-bottom:18px}
+.pcard .card-icon svg{width:40px;height:40px}
+.pcard h2{font-size:17px;margin:0;font-weight:600;letter-spacing:-.01em}
+
+.pcard.pf .card-icon{background:rgba(14,158,144,.12)}
+.pcard.pf .card-icon svg{color:#0b7d72}
+.pcard.fa .card-icon{background:rgba(111,91,224,.12)}
+.pcard.fa .card-icon svg{color:#6f5be0}
+.pcard.cc .card-icon{background:rgba(189,125,18,.12)}
+.pcard.cc .card-icon svg{color:#9a6410}
+.pcard.si .card-icon{background:rgba(217,119,6,.12)}
+.pcard.si .card-icon svg{color:#b45309}
+.pcard.ac .card-icon{background:rgba(220,38,38,.12)}
+.pcard.ac .card-icon svg{color:#991b1b}
+.pcard.mj .card-icon{background:rgba(47,158,106,.13)}
+.pcard.mj .card-icon svg{color:#1c7d50}
+.pcard.hv .card-icon{background:rgba(139,92,246,.12)}
+.pcard.hv .card-icon svg{color:#7c3aed}
+.pcard.bp .card-icon{background:rgba(59,130,246,.12)}
+.pcard.bp .card-icon svg{color:#2563eb}
+.pcard.sn .card-icon{background:rgba(13,148,136,.12)}
+.pcard.sn .card-icon svg{color:#0f766e}
+.pcard.sm .card-icon{background:rgba(219,39,119,.12)}
+.pcard.sm .card-icon svg{color:#be185d}
+
+.foot{text-align:center;color:var(--faint);font-size:11px;font-family:'JetBrains Mono';padding:22px}
+.foot a{color:var(--cyan-d);text-decoration:none}
+</style></head>
+<body>
+<header>
+ <div class="logo"></div>
+ <div class="brand"><div class="t">Tasheel Command Center</div><div class="s">Digital Products · KSA</div></div>
+</header>
+<main>
+ <div class="cards">
+
+   <a class="pcard pf" href="Acquisition_Command_Dashboard.html">
+     <div class="card-icon"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+       <rect x="4" y="6" width="32" height="28" rx="3"/>
+       <line x1="4" y1="14" x2="36" y2="14"/>
+       <polyline points="10,28 16,22 22,25 30,18"/>
+       <circle cx="30" cy="18" r="1.5" fill="currentColor" stroke="none"/>
+     </svg></div>
+     <h2>Personal Finance</h2>
+   </a>
+
+   <a class="pcard fa" href="Funnel_Analysis.html">
+     <div class="card-icon"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+       <path d="M6 8h28L26 20v10l-6 4V20z"/>
+       <line x1="14" y1="14" x2="26" y2="14" stroke-dasharray="2 2" opacity=".5"/>
+       <line x1="16" y1="18" x2="24" y2="18" stroke-dasharray="2 2" opacity=".5"/>
+     </svg></div>
+     <h2>Funnel Analysis</h2>
+   </a>
+
+   <a class="pcard cc" href="Credit_Card_Dashboard.html">
+     <div class="card-icon"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+       <rect x="4" y="9" width="32" height="22" rx="3"/>
+       <line x1="4" y1="17" x2="36" y2="17"/>
+       <rect x="8" y="21" width="8" height="4" rx="1" opacity=".4"/>
+       <line x1="24" y1="25" x2="32" y2="25" opacity=".4"/>
+     </svg></div>
+     <h2>Credit Card</h2>
+   </a>
+
+   <a class="pcard si" href="SIMAH_Intelligence.html">
+     <div class="card-icon"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+       <circle cx="20" cy="20" r="14"/>
+       <path d="M20 10v10l7 7"/>
+       <circle cx="20" cy="20" r="2" fill="currentColor" stroke="none"/>
+       <path d="M10 26a14 14 0 0 1 0-12" opacity=".35" stroke-width="2.5"/>
+       <path d="M30 14a14 14 0 0 1 0 12" opacity=".35" stroke-width="2.5"/>
+     </svg></div>
+     <h2>SIMAH Intelligence</h2>
+   </a>
+
+   <a class="pcard ac" href="Application_Cost.html">
+     <div class="card-icon"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+       <path d="M20 4C12 4 6 8 6 12v16c0 4 6 8 14 8s14-4 14-8V12c0-4-6-8-14-8z"/>
+       <ellipse cx="20" cy="12" rx="14" ry="8"/>
+       <path d="M6 20c0 4 6 8 14 8s14-4 14-8" opacity=".35"/>
+       <path d="M14 16v4M20 17v4M26 16v4" stroke-width="1.5" opacity=".5"/>
+     </svg></div>
+     <h2>Application Cost</h2>
+   </a>
+
+   <a class="pcard mj" href="Mobile_Journey_Source_of_Truth.html">
+     <div class="card-icon"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+       <rect x="11" y="4" width="18" height="32" rx="4"/>
+       <line x1="17" y1="8" x2="23" y2="8" opacity=".4"/>
+       <circle cx="20" cy="32" r="1.2" fill="currentColor" stroke="none"/>
+       <polyline points="16,20 19,23 24,17"/>
+     </svg></div>
+     <h2>Mobile Journey</h2>
+   </a>
+
+   <a class="pcard hv" href="Holistic_View.html">
+     <div class="card-icon"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+       <circle cx="20" cy="20" r="15"/>
+       <circle cx="20" cy="20" r="7" opacity=".5"/>
+       <circle cx="20" cy="20" r="1.5" fill="currentColor" stroke="none"/>
+       <line x1="20" y1="5" x2="20" y2="13"/>
+       <line x1="20" y1="27" x2="20" y2="35"/>
+       <line x1="5" y1="20" x2="13" y2="20"/>
+       <line x1="27" y1="20" x2="35" y2="20"/>
+     </svg></div>
+     <h2>Holistic View</h2>
+   </a>
+
+   <a class="pcard bp" href="Business_Performance_View.html">
+     <div class="card-icon"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+       <path d="M6 34V14l8-8h12l8 8v20"/>
+       <polyline points="10,28 16,20 22,24 28,16 34,22"/>
+       <circle cx="16" cy="20" r="1.5" fill="currentColor" stroke="none"/>
+       <circle cx="22" cy="24" r="1.5" fill="currentColor" stroke="none"/>
+       <circle cx="28" cy="16" r="1.5" fill="currentColor" stroke="none"/>
+       <line x1="20" y1="34" x2="20" y2="30" opacity=".4"/>
+       <line x1="14" y1="34" x2="14" y2="31" opacity=".3"/>
+       <line x1="26" y1="34" x2="26" y2="29" opacity=".3"/>
+     </svg></div>
+     <h2>Business Performance</h2>
+   </a>
+
+   <a class="pcard sn" href="SNB_Overview.html">
+     <div class="card-icon"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+       <rect x="5" y="16" width="8" height="16" rx="1.5"/>
+       <rect x="16" y="10" width="8" height="22" rx="1.5"/>
+       <rect x="27" y="20" width="8" height="12" rx="1.5"/>
+       <path d="M6 12l7-5 8 4 8-6" opacity=".45"/>
+     </svg></div>
+     <h2>SNB Overview</h2>
+   </a>
+
+   <a class="pcard sm" href="SMS_Analyzer.html">
+     <div class="card-icon"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+       <rect x="5" y="8" width="30" height="20" rx="4"/>
+       <path d="M11 28v5l7-5"/>
+       <line x1="11" y1="14" x2="29" y2="14" opacity=".5"/>
+       <line x1="11" y1="19" x2="23" y2="19" opacity=".5"/>
+     </svg></div>
+     <h2>SMS Analyzer</h2>
+   </a>
+
+ </div>
+</main>
+<div class="foot">Built for <a href="https://www.linkedin.com/in/emadayyash" target="_blank">Emad Ayyash</a> · Tasheel Finance</div>
+</body></html>

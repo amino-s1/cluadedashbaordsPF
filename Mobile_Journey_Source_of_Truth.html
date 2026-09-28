@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mobile Journey · Source of Truth · Tasheel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f2f2f7;--panel:#fff;--panel2:#f8f8fb;--raise:#eeeef3;--line:rgba(60,60,67,.12);--line2:rgba(60,60,67,.18);
+ --ink:#1c1c1e;--ink2:#3a3a3c;--muted:#6e6e73;--faint:#aeaeb2;
+ --green:#34c759;--green-d:#248a3d;--green-l:#30d158;--lime:#63e07b;
+ --gold:#ff9f0a;--red:#ff3b30;--blue:#007aff;--violet:#af52de;--teal:#5ac8fa;--indigo:#5856d6;
+ --r:20px;--ease:cubic-bezier(.25,.1,.25,1);--spring:cubic-bezier(.34,1.56,.64,1);}
+*{box-sizing:border-box}html{scroll-behavior:smooth}html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',system-ui,sans-serif;font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.mono{font-family:'SF Mono','JetBrains Mono',monospace}h1,h2,h3,h4,.disp{font-family:'SF Pro Display','Space Grotesk',sans-serif;letter-spacing:-.01em}a{color:var(--blue);text-decoration:none;transition:color .15s}a:hover{color:var(--green-d)}
+
+header{position:sticky;top:0;z-index:40;background:rgba(242,242,247,.72);backdrop-filter:blur(20px) saturate(1.8);-webkit-backdrop-filter:blur(20px) saturate(1.8);border-bottom:.5px solid rgba(60,60,67,.16);padding:12px 28px}
+.hrow{display:flex;align-items:center;gap:16px;flex-wrap:wrap;max-width:1400px;margin:0 auto}
+.logo{width:42px;height:42px;border-radius:12px;position:relative;background:linear-gradient(135deg,var(--green-l),var(--green-d));box-shadow:0 2px 8px rgba(52,199,89,.3);transition:transform .3s var(--spring)}
+.logo:hover{transform:scale(1.08) rotate(-2deg)}
+.logo::before{content:"//";position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-family:'SF Pro Display','Space Grotesk';font-weight:800;font-size:19px;transform:skewX(-8deg)}
+.brand .t{font-weight:700;font-size:19px;line-height:1.1}
+.brand .s{font-size:11px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:1px}
+.spacer{flex:1}
+.tag{font-family:'SF Mono','JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--green-l),var(--green-d));padding:6px 14px;border-radius:20px;box-shadow:0 2px 8px rgba(52,199,89,.25);letter-spacing:.03em}
+.btn{appearance:none;border:none;background:rgba(60,60,67,.06);color:var(--ink);font-weight:600;font-size:13px;padding:8px 16px;border-radius:12px;cursor:pointer;display:inline-flex;gap:7px;align-items:center;transition:all .2s var(--ease)}
+.btn:hover{background:rgba(60,60,67,.12);transform:translateY(-1px)}
+.btn:active{transform:scale(.97)}
+.searchbox{display:flex;align-items:center;gap:8px;background:rgba(60,60,67,.06);border:none;border-radius:12px;padding:8px 14px;min-width:220px;transition:all .2s var(--ease)}
+.searchbox:focus-within{background:var(--panel);box-shadow:0 0 0 3px rgba(0,122,255,.2)}
+.searchbox input{border:none;outline:none;background:transparent;font-size:13px;color:var(--ink);width:100%}.searchbox svg{flex:0 0 auto;opacity:.35}
+
+
+.wrap{max-width:1400px;margin:16px auto 0;padding:0 28px 80px;display:grid;grid-template-columns:240px 1fr;gap:28px;align-items:start}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}nav.toc{display:none}}
+
+/* --- Glass sidebar --- */
+nav.toc{position:sticky;top:80px;background:rgba(255,255,255,.7);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:var(--r);padding:14px;max-height:calc(100vh - 100px);overflow:auto;box-shadow:0 2px 8px rgba(0,0,0,.04);scrollbar-width:none}
+nav.toc::-webkit-scrollbar{display:none}
+nav.toc .th{font-family:'SF Mono','JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin:12px 6px 7px}
+nav.toc .th:first-child{margin-top:2px}
+nav.toc a{display:flex;gap:8px;align-items:baseline;padding:7px 10px;border-radius:10px;color:var(--ink2);font-size:12px;font-weight:500;transition:all .15s var(--ease)}
+nav.toc a:hover{background:rgba(60,60,67,.06)}
+nav.toc a.on{background:rgba(0,122,255,.08);color:var(--blue);font-weight:600}
+nav.toc a .id{font-family:'SF Mono','JetBrains Mono',monospace;font-size:10px;color:var(--green-d);flex:0 0 auto;min-width:34px}
+nav.toc .divider{height:.5px;background:var(--line);margin:8px 4px}
+main{min-width:0}
+
+.sec-h{display:flex;align-items:baseline;gap:12px;margin:12px 2px 18px}
+.sec-h .k{font-family:'SF Mono','JetBrains Mono',monospace;font-size:11px;color:var(--gold);letter-spacing:.12em;font-weight:700}
+.sec-h h2{font-size:20px;font-weight:700;margin:0}
+
+/* --- Patch divider --- */
+.patch-band{display:flex;align-items:center;gap:14px;margin:32px 0 18px;padding:16px 20px;border-radius:16px;border:none;position:relative;overflow:hidden}
+.patch-band::before{content:"";position:absolute;inset:0;border-radius:16px;opacity:.08}
+.patch-band.p1{background:rgba(52,199,89,.06)}.patch-band.p1::before{background:linear-gradient(135deg,var(--green-l),var(--teal))}
+.patch-band.p2{background:rgba(175,82,222,.06)}.patch-band.p2::before{background:linear-gradient(135deg,var(--violet),var(--indigo))}
+.patch-band .pn{font-weight:800;font-size:16px;position:relative}.patch-band.p1 .pn{color:var(--green-d)}.patch-band.p2 .pn{color:var(--violet)}
+.patch-band .pd{font-size:13px;color:var(--muted);position:relative}
+
+/* --- Epic card --- */
+.epic{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:24px;margin-bottom:12px;position:relative;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.epic::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--green-l),var(--green-d));border-radius:4px 0 0 4px}
+.epic h3{margin:0 0 8px;font-size:18px;font-weight:700}.epic .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.pill{font-family:'SF Mono','JetBrains Mono',monospace;font-size:10.5px;padding:5px 11px;border-radius:20px;background:var(--raise);color:var(--ink2);border:none;font-weight:500}
+.pill.must{background:rgba(52,199,89,.1);color:var(--green-d);font-weight:600}
+
+/* --- Visual story cards --- */
+.story{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);margin-bottom:14px;overflow:hidden;scroll-margin-top:90px;transition:all .3s var(--ease);box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.story:hover{box-shadow:0 4px 16px rgba(0,0,0,.08);transform:translateY(-2px)}
+.story.open{box-shadow:0 8px 32px rgba(0,0,0,.1);transform:none}
+.story.p1{border-left:4px solid var(--green)}.story.p2{border-left:4px solid var(--violet)}
+.story-h{display:flex;align-items:center;gap:14px;padding:16px 20px;cursor:pointer;user-select:none;border-bottom:1px solid transparent;transition:all .2s var(--ease)}
+.story.open .story-h{border-bottom-color:var(--line);background:var(--panel2)}
+.story-h:hover{background:rgba(60,60,67,.03)}
+.sid{font-family:'SF Mono','JetBrains Mono',monospace;font-weight:700;font-size:11px;color:#fff;padding:6px 11px;border-radius:10px;flex:0 0 auto;letter-spacing:.03em}
+.story.p1 .sid{background:linear-gradient(135deg,var(--green-l),var(--green-d))}
+.story.p2 .sid{background:linear-gradient(135deg,#c9a0f0,var(--violet))}
+.story-h .stitle{font-weight:600;font-size:15px;flex:1;min-width:0}
+.story-h .persona{font-size:11px;color:var(--muted);font-family:'SF Mono','JetBrains Mono',monospace;text-align:right;line-height:1.4}
+.story-h .mbadge{display:inline-flex;gap:6px;align-items:center;flex:0 0 auto}
+.story-h .moscow-dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto}
+.moscow-dot.Must{background:var(--green);box-shadow:0 0 6px rgba(52,199,89,.4)}
+.moscow-dot.Should{background:var(--blue);box-shadow:0 0 6px rgba(0,122,255,.3)}
+.moscow-dot.Could{background:var(--gold);box-shadow:0 0 6px rgba(255,159,10,.3)}
+.moscow-dot.Wont{background:var(--faint)}
+.story-h .pts-chip{font-family:'SF Mono','JetBrains Mono',monospace;font-size:9px;font-weight:700;color:var(--muted);background:var(--raise);padding:3px 7px;border-radius:8px;letter-spacing:.02em}
+.story.open .mbadge{display:none}
+.story-h .caret{color:var(--faint);transition:all .3s var(--spring);flex:0 0 auto;font-size:16px}
+.story.open .caret{transform:rotate(90deg);color:var(--blue)}
+.story-b{display:none;padding:8px 24px 24px}.story.open .story-b{display:block;animation:slideIn .35s var(--ease)}
+@keyframes slideIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+
+/* --- User story quote --- */
+.quote{background:linear-gradient(135deg,rgba(0,122,255,.04),rgba(52,199,89,.04));border-left:3px solid var(--blue);border-radius:0 14px 14px 0;padding:16px 20px;margin:14px 0 20px;font-size:14px;color:var(--ink);line-height:1.7}
+.quote b{color:var(--blue)}
+
+/* --- Field sections --- */
+.fld{margin:20px 0 8px}
+.fld .flab{font-family:'SF Mono','JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:700;display:flex;align-items:center;gap:10px}
+.fld .flab::after{content:"";flex:1;height:.5px;background:var(--line)}
+ul.ac,ul.lst{list-style:none;padding:0;margin:10px 0 0}
+ul.ac li,ul.lst li{position:relative;padding:6px 0 6px 24px;font-size:13px;color:var(--ink2);line-height:1.6}
+ul.ac li::before{content:"";position:absolute;left:4px;top:12px;width:8px;height:8px;border-radius:50%;background:var(--green);opacity:.7}
+ul.lst li::before{content:"";position:absolute;left:6px;top:13px;width:5px;height:5px;border-radius:50%;background:var(--faint)}
+.gwt{color:var(--blue);font-weight:600;font-family:'SF Mono','JetBrains Mono',monospace;font-size:11.5px}
+
+/* --- Meta tags --- */
+.metarow{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.mtag{font-family:'SF Mono','JetBrains Mono',monospace;font-size:10.5px;padding:5px 12px;border-radius:20px;background:var(--raise);color:var(--ink2);border:none;transition:all .2s var(--ease)}
+.mtag:hover{background:rgba(60,60,67,.1);transform:scale(1.03)}
+.mtag b{color:var(--blue)}
+
+/* --- Regulatory --- */
+.reg{background:rgba(255,159,10,.05);border:1px solid rgba(255,159,10,.15);border-radius:14px;padding:14px 16px;margin-top:10px;font-size:12.5px;color:var(--ink2);line-height:1.6}
+
+/* --- Tables --- */
+table.dt{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px;margin-top:6px;border-radius:12px;overflow:hidden}
+table.dt th{text-align:left;color:var(--muted);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.08em;padding:12px 14px;background:var(--panel2);border-bottom:1px solid var(--line)}
+table.dt td{padding:11px 14px;border-bottom:1px solid var(--line);color:var(--ink2);transition:background .15s}
+table.dt td.c,table.dt th.c{text-align:center;font-family:'SF Mono','JetBrains Mono',monospace}
+table.dt tr:hover td{background:rgba(0,122,255,.03)}
+table.dt tr:last-child td{border-bottom:none}
+
+.panel-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:22px 24px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.chain{font-family:'SF Mono','JetBrains Mono',monospace;font-size:12px;color:var(--ink2);background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-top:14px;line-height:2}.chain b{color:var(--blue)}
+.note{font-size:12px;color:var(--muted);background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-top:8px;line-height:1.6}
+.foot{color:var(--faint);font-size:11px;text-align:center;margin-top:44px;line-height:1.8;font-family:'SF Mono','JetBrains Mono',monospace;padding:24px 0;border-top:.5px solid var(--line)}
+.foot a{color:var(--blue)}.foot a:hover{color:var(--green-d)}
+.controls-row{display:flex;gap:8px;margin:0 2px 14px;flex-wrap:wrap}
+@media print{header{position:static}nav.toc,.controls-row,.searchbox,.btn{display:none}.story-b{display:block!important}.story{break-inside:avoid}.wrap{grid-template-columns:1fr}}
+</style></head>
+<body>
+<header><div class="hrow">
+  <div class="logo"></div>
+  <div class="brand"><div class="t">Mobile Journey · Source of Truth</div><div class="s">Tasheel Finance · CP Board</div></div>
+  <span class="tag">PATCH 1 + 2</span>
+  <a class="btn" href="index.html" style="text-decoration:none;margin-left:8px">← Home</a>
+  <div class="spacer"></div>
+  <div class="searchbox"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="search" placeholder="Filter stories…"></div>
+  <button class="btn" onclick="expandAll(true)">Expand all</button>
+  <button class="btn" onclick="window.print()">⌘ Print / PDF</button>
+</div></header>
+
+
+<div class="wrap">
+  <nav class="toc" id="toc"></nav>
+  <main>
+    <div class="sec-h"><span class="k">JOURNEY</span><h2>End-to-end mobile origination — source of truth</h2></div>
+    <div class="epic">
+      <h3>Full journey · 20 screens · 20 stories · 70 points</h3>
+      <div style="color:var(--ink2);font-size:13.5px">Canonical reference for the Tasheel mobile origination journey, from product landing through disbursement and servicing. Patch 1 covers Registration → Application → pre-qual → offer; Patch 2 covers completion → e-signature → disbursement → servicing.</div>
+      <div class="meta">
+        <span class="pill must">Board · CP</span><span class="pill">Patch 1 · 13 stories</span><span class="pill">Patch 2 · 7 stories</span>
+        <span class="pill">Gate · NAFATH (P2-S5)</span><span class="pill">API order · CITC→NAFATH→GOSI→MOF→SIMAH→NAFITH→Lean→Yakeen</span>
+      </div>
+      <div class="note" style="margin-top:14px"><b>Observations flagged in stories:</b> iOS location dialog reads “Baseeta App” (brand inconsistency → P1-S11); “Select purpose” shows under the E-Signature progress bar (stage placement → P1-S12); indicative pre-qual (SAR 36,000) differs from approved amount (SAR 48,000) — expected, pre-qual is non-binding (P1-S4 / P1-S13).</div>
+    </div>
+    <div id="stories"></div>
+
+    <div class="sec-h" style="margin-top:26px"><span class="k">PLAN</span><h2>Backlog summary &amp; dependencies</h2></div>
+    <div class="panel-card">
+      <table class="dt"><thead><tr><th>ID</th><th class="c">Patch</th><th>Story</th><th class="c">MoSCoW</th><th class="c">WSJF</th><th class="c">Pts</th></tr></thead><tbody id="sprint"></tbody></table>
+      <div class="chain"><b>Registration:</b> P1-S5 → S6 → S7 → S8 &nbsp; | &nbsp; <b>Application:</b> S9 → S10 → S11 → S12 &nbsp; | &nbsp; <b>Offer:</b> S13<br>
+        <b>Completion:</b> P2-S1 → (S2, S3, S4) → <b>S5 [NAFATH gate]</b> → S6 → S7<br>
+        <span style="color:var(--muted)">Pre-qual (P1-S3) makes no external API calls; nothing after P2-S5 proceeds without NAFATH success.</span></div>
+    </div>
+
+    <div class="sec-h" style="margin-top:26px"><span class="k">REGISTRY</span><h2>Patch coverage</h2></div>
+    <div class="panel-card"><table class="dt"><thead><tr><th>Patch</th><th>Journey span</th><th class="c">Status</th></tr></thead><tbody>
+      <tr><td><b style="color:var(--green-d)">Patch 1</b></td><td>Landing → Pre-qual → Registration → Application → Offer</td><td class="c"><span class="mtag" style="background:rgba(90,168,50,.14);color:var(--green-d)"><b>in this document</b></span></td></tr>
+      <tr><td><b style="color:var(--violet)">Patch 2</b></td><td>Completion → E-Signature → Disbursement → Servicing</td><td class="c"><span class="mtag" style="background:rgba(122,101,214,.14);color:var(--violet)"><b>in this document</b></span></td></tr>
+    </tbody></table></div>
+
+    <div class="foot" id="foot"></div>
+  </main>
+</div>
+<script>
+const STORIES=[{"id": "P1-S1", "patch": 1, "screen": "15", "title": "Product Selection Landing", "persona": "Prospect / Visitor", "want": "to see the available products with key terms and an Apply Now action", "so": "I can start the right application for my need", "ac": ["<span class=\"gwt\">Given</span> the app opens on the Welcome screen", "<span class=\"gwt\">When</span> the visitor views it", "<span class=\"gwt\">Then</span> three product cards are shown with headline terms — Personal Finance (up to SAR 250,000 / 60 months), Baseeta (1–36 payments, SAR 100–60,000), Credit Card (instant, no annual fee first year)", "<span class=\"gwt\">And</span> Sign-in and Arabic (عربي) toggle are available", "<span class=\"gwt\">When</span> Apply Now is tapped <span class=\"gwt\">Then</span> route to that product’s journey"], "edge": ["Returning/logged-in user → personalised state", "Arabic selected → full RTL layout", "Product unavailable → hide or greyed with reason", "Deep-link directly into a product journey"], "deps": ["Product config / CMS", "Auth service", "i18n (AR/EN, RTL)"], "reg": "SAMA advertising & disclosure (representative terms; APR/profit disclosed on product detail); Sharia-compliant product labelling.", "analytics": ["home_viewed", "product_apply_clicked(product)", "language_toggled", "signin_clicked"], "section": "Origination › Landing", "moscow": "Must", "wsjf": "Med", "pts": 3, "role": "a visitor opening the app"}, {"id": "P1-S2", "patch": 1, "screen": "14", "title": "3-Step Journey Intro", "persona": "Applicant", "want": "a quick explainer that the process is 3 steps (~10 min)", "so": "I know what to expect and proceed with confidence", "ac": ["<span class=\"gwt\">Given</span> the applicant starts a product journey", "<span class=\"gwt\">When</span> the intro shows", "<span class=\"gwt\">Then</span> it lists Registration, Application, Electronic Signature and a ~10-minute estimate", "<span class=\"gwt\">And</span> Next advances; the screen is dismissable (X)"], "edge": ["Returning applicant → allow skip", "RTL rendering"], "deps": ["None"], "reg": "None identified.", "analytics": ["intro_viewed", "intro_next", "intro_dismissed"], "section": "Origination › Onboarding", "moscow": "Should", "wsjf": "Low", "pts": 1, "role": "a new applicant"}, {"id": "P1-S3", "patch": 1, "screen": "13", "title": "Pre-Qualification Eligibility Check", "persona": "Applicant", "want": "to check eligibility with declarative inputs before any credit check", "so": "I get an indicative offer without an unnecessary hard pull", "ac": ["<span class=\"gwt\">Given</span> the eligibility screen", "<span class=\"gwt\">When</span> entering Saudi national (Y/N), employment sector, monthly income, total monthly installments to other FIs, total credit-card limit, and mortgage (Y/N)", "<span class=\"gwt\">Then</span> inputs are validated", "<span class=\"gwt\">When</span> Proceed is tapped", "<span class=\"gwt\">Then</span> indicative DBR / affordability is computed locally (no external API) and the outcome screen is shown"], "edge": ["Obligations ≥ income → high DBR, soft/indicative decline", "Non-Saudi path variations", "Sector list from config", "Mortgage inclusion changes DBR weighting", "Pre-qual is declarative only — no SIMAH/GOSI here"], "deps": ["DBR / affordability rules engine (local)", "Employment-sector config", "<b>No external API</b> (pre-qual gate)"], "reg": "SAMA Responsible Lending DBR caps (obligation-type weighting incl. mortgage); indicative-only, non-binding disclaimer.", "analytics": ["prequal_started", "prequal_field_completed", "prequal_proceed", "prequal_result(eligible/ineligible)"], "section": "Origination › Pre-Qualification", "moscow": "Must", "wsjf": "High", "pts": 5, "role": "a prospective applicant"}, {"id": "P1-S4", "patch": 1, "screen": "3 / 4", "title": "Eligibility Outcome (Commitment Anchor)", "persona": "Applicant", "want": "to see my indicative finance amount and max tenure", "so": "I am anchored to proceed before the hard credit pull", "ac": ["<span class=\"gwt\">Given</span> pre-qual passed", "<span class=\"gwt\">Then</span> show indicative Finance Amount (e.g. SAR 36,000) and Max Tenure (e.g. 60 months) with a “subject to change” disclaimer", "<span class=\"gwt\">When</span> Next is tapped <span class=\"gwt\">Then</span> proceed to Registration"], "edge": ["Ineligible → reason + alternatives (Baseeta / Card)", "Values sourced from pre-qual calc", "Disclaimer mandatory"], "deps": ["Pre-qual output"], "reg": "SAMA — indicative, non-binding; must state subject to verification; no commitment created.", "analytics": ["eligibility_shown(amount,tenure)", "eligibility_next", "eligibility_ineligible"], "section": "Origination › Indicative Offer", "moscow": "Must", "wsjf": "High", "pts": 3, "role": "an applicant who passed pre-qual"}, {"id": "P1-S5", "patch": 1, "screen": "12", "title": "Capture National ID / Iqama", "persona": "Applicant", "want": "to enter my National ID / Iqama number", "so": "my identity record can be established", "ac": ["<span class=\"gwt\">Given</span> the registration stage", "<span class=\"gwt\">When</span> entering the NID / Iqama", "<span class=\"gwt\">Then</span> validate format (10 digits; 1 = Saudi, 2 = Iqama prefix) and show the safeguard note", "<span class=\"gwt\">And</span> proceed to mobile capture"], "edge": ["Invalid length/prefix → inline error", "Existing customer → route to login", "PDPL safeguard note shown"], "deps": ["Identity service", "Downstream NAFATH / Yakeen (later stages)"], "reg": "PDPL data protection; SAMA eKYC (NID basis for identity).", "analytics": ["nid_entered", "nid_validation_failed", "existing_customer_detected"], "section": "Registration › Identity", "moscow": "Must", "wsjf": "High", "pts": 3, "role": "an applicant in registration"}, {"id": "P1-S6", "patch": 1, "screen": "11", "title": "Capture & Validate Mobile Number", "persona": "Applicant", "want": "to enter my mobile number registered under my name", "so": "it can be verified via OTP", "ac": ["<span class=\"gwt\">Given</span> the registration stage", "<span class=\"gwt\">When</span> entering a +966 mobile number", "<span class=\"gwt\">Then</span> validate KSA format and show the note “must be registered under your name”", "<span class=\"gwt\">And</span> on valid input proceed to OTP; on invalid show inline error state"], "edge": ["Invalid format → inline error (as shown)", "Non-KSA number → block", "Number not owned (CITC mismatch) → fail at verification", "Home/Work autofill suggestions"], "deps": ["CITC (ownership) at OTP step", "SMS gateway"], "reg": "CITC mobile-ownership verification; SAMA eKYC; PDPL.", "analytics": ["mobile_entered", "mobile_validation_failed"], "section": "Registration › Mobile", "moscow": "Must", "wsjf": "High", "pts": 3, "role": "an applicant in registration"}, {"id": "P1-S7", "patch": 1, "screen": "9", "title": "OTP Verification (CITC)", "persona": "Applicant", "want": "to enter the OTP sent to my phone", "so": "my number is verified", "ac": ["<span class=\"gwt\">Given</span> the mobile number was submitted", "<span class=\"gwt\">Then</span> a 4-digit OTP is sent via SMS (sender 7553)", "<span class=\"gwt\">When</span> the applicant enters the digits (auto-read from Messages where supported)", "<span class=\"gwt\">Then</span> on match the number is verified", "<span class=\"gwt\">And</span> Resend and Change-number options are available"], "edge": ["Wrong OTP → retries with cap", "Resend throttle (e.g. 5-min)", "Change number → back to mobile step", "SMS not delivered → resend / alternate channel"], "deps": ["CITC / OTP service", "SMS gateway"], "reg": "CITC ownership verification; SAMA eKYC.", "analytics": ["otp_sent", "otp_submitted", "otp_result", "otp_resend_clicked", "otp_change_number"], "section": "Registration › OTP", "moscow": "Must", "wsjf": "High", "pts": 3, "role": "an applicant who submitted a mobile number"}, {"id": "P1-S8", "patch": 1, "screen": "10", "title": "Create Account Password", "persona": "Applicant", "want": "to create a password meeting the strength rules", "so": "I can securely log in to web or app later", "ac": ["<span class=\"gwt\">Given</span> the number is verified", "<span class=\"gwt\">When</span> entering a password", "<span class=\"gwt\">Then</span> enforce rules with a live checklist (min 8 chars, capital letter, numbers) and confirm-match", "<span class=\"gwt\">And</span> show the note that it is used for web/app login; then proceed"], "edge": ["Mismatch → error", "Weak password → block", "Show/hide toggle", "Optional breached-password check"], "deps": ["Auth / identity store"], "reg": "PDPL; SAMA cybersecurity framework (credential handling).", "analytics": ["password_created", "password_rule_failed"], "section": "Registration › Credentials", "moscow": "Must", "wsjf": "Med", "pts": 2, "role": "an applicant post-OTP"}, {"id": "P1-S9", "patch": 1, "screen": "6", "title": "Capture Full Name (per ID / Iqama)", "persona": "Applicant", "want": "to enter my full name as per national ID / Iqama", "so": "my records match my official identity", "ac": ["<span class=\"gwt\">Given</span> the application stage", "<span class=\"gwt\">When</span> entering First (required), Second (optional), Family (required)", "<span class=\"gwt\">Then</span> validate and proceed", "<span class=\"gwt\">And</span> where possible pre-fill from NAFATH / Yakeen, with manual fallback"], "edge": ["Name mismatch vs NAFATH → flag for review", "Arabic / English entry", "Special characters handling"], "deps": ["NAFATH / Yakeen (authoritative name source)"], "reg": "SAMA eKYC name-match; PDPL.", "analytics": ["name_entered", "name_prefilled(source)"], "section": "Application › Identity Details", "moscow": "Should", "wsjf": "Med", "pts": 2, "role": "an applicant in application"}, {"id": "P1-S10", "patch": 1, "screen": "5", "title": "Capture Email", "persona": "Applicant", "want": "to enter my email", "so": "I receive documents and communications", "ac": ["<span class=\"gwt\">Given</span> the application stage", "<span class=\"gwt\">When</span> entering an email", "<span class=\"gwt\">Then</span> validate format and proceed, offering domain suggestions"], "edge": ["Invalid format → inline error", "Duplicate email", "Optional disposable-domain block"], "deps": ["Comms / email service"], "reg": "PDPL consent for electronic communications.", "analytics": ["email_entered", "email_validation_failed"], "section": "Application › Contact", "moscow": "Should", "wsjf": "Low", "pts": 1, "role": "an applicant in application"}, {"id": "P1-S11", "patch": 1, "screen": "7 + 8", "title": "Nearest Branch Selection + Location Permission", "persona": "Applicant", "want": "to select my nearest branch, optionally using my location", "so": "branch-linked steps route correctly", "ac": ["<span class=\"gwt\">Given</span> the application stage", "<span class=\"gwt\">When</span> prompted for location", "<span class=\"gwt\">Then</span> request OS permission (Allow Once / While Using / Don’t Allow)", "<span class=\"gwt\">And</span> if allowed, pre-fill Region → City → nearest Branch; else offer manual cascading selects", "<span class=\"gwt\">When</span> a branch is chosen <span class=\"gwt\">Then</span> proceed"], "edge": ["Permission denied → manual path (never block)", "Location services off → manual", "Branch list per city from config", "<b>Gap:</b> iOS permission dialog reads “Baseeta App” — brand inconsistency to fix"], "deps": ["Maps / location service", "Branch directory config"], "reg": "PDPL location consent; privacy-preserving default (manual always available).", "analytics": ["location_permission_result", "branch_selected(region,city,branch)"], "section": "Application › Branch", "moscow": "Should", "wsjf": "Med", "pts": 3, "role": "an applicant in application"}, {"id": "P1-S12", "patch": 1, "screen": "1", "title": "Select Purpose of Finance", "persona": "Applicant", "want": "to select the purpose of my finance", "so": "the product terms and compliance checks are correct", "ac": ["<span class=\"gwt\">Given</span> the offer stage", "<span class=\"gwt\">When</span> selecting Purpose (Buying a car / house / laptop, Education, Others)", "<span class=\"gwt\">Then</span> capture the value; “Others” reveals optional free-text", "<span class=\"gwt\">And</span> proceed"], "edge": ["Purpose affects product routing / terms", "“Others” may require detail", "RTL", "<b>Gap:</b> screen shows under “Electronic Signature” progress — verify stage placement"], "deps": ["Product config"], "reg": "SAMA / AML purpose-of-financing capture; Sharia purpose permissibility.", "analytics": ["purpose_selected(value)"], "section": "Application › Purpose", "moscow": "Should", "wsjf": "Med", "pts": 2, "role": "an applicant selecting terms"}, {"id": "P1-S13", "patch": 1, "screen": "2", "title": "Final Offer, Approval & Tenure Selection", "persona": "Applicant", "want": "to see my approved amount and profit rate and pick a tenure", "so": "I accept the terms before signing", "ac": ["<span class=\"gwt\">Given</span> DE final approval", "<span class=\"gwt\">Then</span> show Finance Amount (e.g. SAR 48,000), Annual profit rate (e.g. 1.50%) and a Modify option", "<span class=\"gwt\">When</span> selecting a tenure (60/48/36/24/12/6) each showing its monthly installment", "<span class=\"gwt\">Then</span> Next confirms and proceeds to the approval confirmation call (Patch 2 · S1)"], "edge": ["Modify amount → recompute installments / eligibility", "Tenure caps by DBR", "Installment = calc(amount, rate, tenure)", "Approved (48k) may differ from indicative pre-qual (36k)", "Offer expiry"], "deps": ["DE / offer engine", "Installment calculator", "APR / profit disclosure service"], "reg": "SAMA APR / Murabaha profit disclosure; Responsible Lending affordability; Sharia profit (not interest) wording.", "analytics": ["offer_shown(amount,rate)", "tenure_selected(months,installment)", "offer_modify_clicked", "offer_next"], "section": "Offer › Approval & Tenure", "moscow": "Must", "wsjf": "High", "pts": 5, "role": "an approved applicant"}, {"id": "P2-S1", "patch": 2, "screen": "19", "title": "Approval Confirmation Call Notice", "persona": "Applicant (secondary: Contact Center Agent)", "want": "a clear notice that Tasheel will call me from an official number to confirm my application", "so": "I expect the call, trust it isn’t fraud, and complete confirmation without dropping off", "ac": ["<span class=\"gwt\">Given</span> the application has reached “Approved” (post-DE / final approval)", "<span class=\"gwt\">When</span> the applicant lands on this screen", "<span class=\"gwt\">Then</span> the app shows approval status and the official outbound number, sourced from config (not hardcoded)", "<span class=\"gwt\">And</span> a continue control advances the journey while the call is pending", "<span class=\"gwt\">Given</span> the confirmation call is completed <span class=\"gwt\">Then</span> state updates to “Confirmed” and unblocks signature"], "edge": ["Number config missing → generic “official Tasheel number” copy", "Applicant advances before call → allow, mark “call pending”", "Unanswered after N attempts → route to Sales Vetting", "Spoofing risk → anti-fraud disclaimer (“we never ask for OTP/PIN”)"], "deps": ["Telephony / IVR platform", "Back-office call-outcome write-back", "Config service for whitelisted number"], "reg": "SAMA Responsible Lending affordability re-confirmation; call-recording consent + PDPL; number whitelisting vs impersonation fraud.", "analytics": ["approval_call_screen_viewed", "approval_call_continue_clicked", "approval_call_outcome"], "section": "Origination › Post-Approval", "moscow": "Must", "wsjf": "Med", "pts": 3, "role": "an approved applicant"}, {"id": "P2-S2", "patch": 2, "screen": "16", "title": "Capture & Verify Disbursement IBAN", "persona": "Applicant", "want": "to enter the IBAN where my funds will be sent, with instant validation", "so": "my disbursement reaches the correct account without manual rework", "ac": ["<span class=\"gwt\">Given</span> the applicant is on the IBAN screen", "<span class=\"gwt\">When</span> they enter an IBAN", "<span class=\"gwt\">Then</span> validate format (SA + 22 digits, mod-97) inline before enabling continue", "<span class=\"gwt\">And</span> on submit name-match to the applicant via Lean / Yakeen", "<span class=\"gwt\">Given</span> the name match passes <span class=\"gwt\">Then</span> store the IBAN and proceed to mandate setup"], "edge": ["Invalid format → inline error", "Third-party IBAN (name mismatch) → hard stop", "Lean timeout → retry once, then Save & Resume", "Unsupported bank → guidance", "Duplicate IBAN → flag for review"], "deps": ["API order: <b>Lean (IBAN ownership) → [Yakeen fallback]</b>", "SARIE for disbursement", "Disbursement service"], "reg": "SAMA AML — disburse only to applicant’s own verified account; IBAN name-match mandatory; PDPL.", "analytics": ["iban_entered", "iban_validation_failed(reason)", "iban_ownership_result"], "section": "Disbursement › IBAN Capture", "moscow": "Must", "wsjf": "High", "pts": 5, "role": "an approved applicant"}, {"id": "P2-S3", "patch": 2, "screen": "20", "title": "Add Mada Card for Automated Repayment (E-Mandate)", "persona": "Applicant", "want": "to register my Mada card for automatic repayments", "so": "my instalments are collected on schedule without manual action", "ac": ["<span class=\"gwt\">Given</span> the “Add Mada card” screen", "<span class=\"gwt\">When</span> entering card number, expiry and CVV", "<span class=\"gwt\">Then</span> validate with a SAR 1.00 authorisation that is auto-reversed", "<span class=\"gwt\">And</span> on success tokenise and link as the repayment mandate", "<span class=\"gwt\">Given</span> no monthly repayment is due <span class=\"gwt\">Then</span> the card is not charged"], "edge": ["SAR 1 auth declined → retry with different card", "Non-Mada card → reject", "Reversal fails → log + alert, don’t block", "Tokenisation down → Save & Resume", "Past expiry → inline validation"], "deps": ["Payment gateway (Mada) tokenisation", "SADAD / Mada recurring-mandate", "Reversal reconciliation job"], "reg": "SAMA e-mandate / recurring-payment consent; PCI-DSS (token only); SAR 1 validate-and-reverse disclosure.", "analytics": ["mada_card_setup_started", "mada_validation_result", "mada_mandate_linked"], "section": "Disbursement › Repayment Mandate", "moscow": "Must", "wsjf": "High", "pts": 5, "role": "an approved applicant"}, {"id": "P2-S4", "patch": 2, "screen": "18", "title": "Accept Sharia-Compliant Service Documents", "persona": "Applicant", "want": "to review and accept the Sharia-compliant contract documents", "so": "I consent to the financing terms before signing", "ac": ["<span class=\"gwt\">Given</span> the document-consent screen", "<span class=\"gwt\">When</span> tapping “click here” (or the emailed link)", "<span class=\"gwt\">Then</span> render the Sharia documents (Arabic primary, RTL) and email them", "<span class=\"gwt\">Given</span> “Accept and continue” is tapped <span class=\"gwt\">Then</span> capture consent with timestamp, version and device context; advance to e-signature"], "edge": ["Docs fail to load → retry / emailed fallback, block until viewed", "Email undelivered → in-app view still available", "Accepted-unviewed → compliance flag", "Version changed mid-session → force re-fetch"], "deps": ["Document generation service", "Email delivery", "Consent / audit store"], "reg": "SAMA Sharia governance + consumer protection (terms before signing); versioned consent audit; SAMA supervision disclosure must persist.", "analytics": ["sharia_docs_viewed", "sharia_docs_accepted(version)", "sharia_docs_email_sent"], "section": "E-Signature › Contract Consent", "moscow": "Must", "wsjf": "Med-High", "pts": 3, "role": "an approved applicant"}, {"id": "P2-S5", "patch": 2, "screen": "17", "title": "NAFATH Identity Verification for E-Signature", "persona": "Applicant", "want": "to authenticate via NAFATH by matching the displayed number", "so": "my identity is verified to legally e-sign", "ac": ["<span class=\"gwt\">Given</span> the e-signature stage", "<span class=\"gwt\">When</span> the screen loads", "<span class=\"gwt\">Then</span> display a NAFATH match number (e.g. “75”) with steps to open the app", "<span class=\"gwt\">Given</span> the number is approved in NAFATH within TTL <span class=\"gwt\">Then</span> verification succeeds and proceeds to the promissory note", "<span class=\"gwt\">And</span> a download / open NAFATH deep link is provided"], "edge": ["NAFATH not installed → store deep link", "TTL expiry → regenerate with retry (capped)", "Wrong number → fail + retry", "NAFATH down → Save & Resume, do not proceed", "Rapid requests → throttle"], "deps": ["<b>NAFATH API</b>", "E-signature orchestration", "<b>Hard gate:</b> no downstream signing/booking until NAFATH success"], "reg": "SAMA eKYC — NAFATH is the mandated identity/auth mechanism for e-signature; PDPL data minimisation on NID.", "analytics": ["nafath_number_shown", "nafath_result(success/expired/mismatch/downtime)", "nafath_retry_count"], "section": "E-Signature › Identity Auth", "moscow": "Must", "wsjf": "High", "pts": 5, "role": "an applicant at the signature stage"}, {"id": "P2-S6", "patch": 2, "screen": "21", "title": "Nafith E-Promissory Note Submission & Sign Link", "persona": "Applicant", "want": "my request submitted to Nafith with an SMS link to e-sign the promissory note", "so": "my application completes and my product activates", "ac": ["<span class=\"gwt\">Given</span> NAFATH verification succeeded", "<span class=\"gwt\">When</span> the request is submitted to Nafith", "<span class=\"gwt\">Then</span> a success screen confirms submission and states an SMS sign-link valid for 24 hours", "<span class=\"gwt\">And</span> copy sets expectation that once signed the application completes and the card/funds are ready within 24 hours", "<span class=\"gwt\">Given</span> the note is signed <span class=\"gwt\">Then</span> the application moves to “Completed” and servicing unlocks"], "edge": ["Nafith submission fails → retry + alert", "SMS not delivered → resend / alternate", "Link expires (24h) → regenerate, no full re-apply", "Signed-but-webhook-missed → reconciliation", "Partial completion → Save & Resume"], "deps": ["<b>Nafith (SANAD e-promissory note) API</b>", "SMS gateway", "NAFATH (for signing)", "Completion webhook / reconciliation"], "reg": "SANAD / Nafith e-promissory note under SAMA / Ministry of Justice; 24-hour link validity; e-signature binds via NAFATH.", "analytics": ["nafith_submitted", "nafith_sms_sent", "nafith_link_expired", "nafith_signed"], "section": "E-Signature › Promissory Note", "moscow": "Must", "wsjf": "High", "pts": 5, "role": "an applicant who has authenticated"}, {"id": "P2-S7", "patch": 2, "screen": "23 / 22", "title": "Current Finance Servicing View (Dynamic Actions)", "persona": "Existing Customer / Borrower", "want": "a Current Finance summary with a context-aware action row", "so": "I can track and manage my loan (pay, documents, settlement, payment table)", "ac": ["<span class=\"gwt\">Given</span> the customer has an active finance", "<span class=\"gwt\">When</span> they open the Finance tab", "<span class=\"gwt\">Then</span> show product, instalment count, end date, progress (Paid / To-go), monthly instalment, due date, unpaid and full amounts", "<span class=\"gwt\">And</span> a quick-action row renders dynamically from the eligible set (Pay Now, Loan Documents, Liability Letter, Clearance Letter, Early Settlement, Payment Table, More)", "<span class=\"gwt\">When</span> an action is selected <span class=\"gwt\">Then</span> the servicing flow opens"], "edge": ["Overdue → prioritise Pay Now", "Settled → hide Pay Now, show Clearance Letter", "Action unavailable → hide (don’t disable silently)", "Data fetch fails → skeleton + retry", "RTL verified"], "deps": ["Loan servicing APIs (balance, schedule, documents)", "Early-settlement engine", "Letter-generation service"], "reg": "SAMA early-repayment rules (fee cap + profit rebate); consumer-protection letters (liability/clearance); APR/Murabaha disclosure on summary.", "analytics": ["current_finance_viewed", "servicing_action_clicked(action_id)", "pay_now_started"], "section": "Loan Servicing › Current Finance", "moscow": "Should", "wsjf": "Med", "pts": 8, "role": "a customer with an active finance"}];
+const JOURNEY=[{"n": "15", "lbl": "Welcome / Products", "stp": "Landing", "patch": 1}, {"n": "14", "lbl": "3-Step Intro", "stp": "Onboarding", "patch": 1}, {"n": "13", "lbl": "Eligibility Check", "stp": "Pre-Qual", "patch": 1}, {"n": "3/4", "lbl": "Eligible Result", "stp": "Indicative Offer", "patch": 1}, {"n": "12", "lbl": "National ID / Iqama", "stp": "Registration", "patch": 1}, {"n": "11", "lbl": "Mobile Number", "stp": "Registration", "patch": 1}, {"n": "9", "lbl": "OTP Verify", "stp": "Registration", "patch": 1}, {"n": "10", "lbl": "Create Password", "stp": "Registration", "patch": 1}, {"n": "6", "lbl": "Full Name", "stp": "Application", "patch": 1}, {"n": "5", "lbl": "Email", "stp": "Application", "patch": 1}, {"n": "7/8", "lbl": "Branch + Location", "stp": "Application", "patch": 1}, {"n": "1", "lbl": "Purpose", "stp": "Application", "patch": 1}, {"n": "2", "lbl": "Approval + Tenure", "stp": "Offer", "patch": 1}, {"n": "19", "lbl": "Approval Call", "stp": "Post-Approval", "patch": 2}, {"n": "16", "lbl": "IBAN", "stp": "Disbursement", "patch": 2}, {"n": "20", "lbl": "Mada Card", "stp": "Mandate", "patch": 2}, {"n": "18", "lbl": "Sharia Docs", "stp": "Consent", "patch": 2}, {"n": "17", "lbl": "NAFATH", "stp": "Identity Auth", "patch": 2}, {"n": "21", "lbl": "Nafith Note", "stp": "E-Sign", "patch": 2}, {"n": "23/22", "lbl": "Current Finance", "stp": "Servicing", "patch": 2}];
+// TOC grouped by patch
+let toc='';
+[1,2].forEach(p=>{
+ toc+=`<div class="th">Patch ${p} · ${p===1?'Registration → Offer':'Completion → Servicing'}</div>`;
+ STORIES.filter(s=>s.patch===p).forEach(s=>{toc+=`<a href="#${s.id}" data-t="${s.id}"><span class="id">${s.id}</span> ${s.title}</a>`;});
+ if(p===1)toc+='<div class="divider"></div>';
+});
+toc+='<div class="divider"></div><a href="#" onclick="document.querySelector(\'.chain\').scrollIntoView({behavior:\'smooth\'});return false"><span class="id">▤</span> Backlog plan</a>';
+document.getElementById('toc').innerHTML=toc;
+
+function list(arr,cls){return `<ul class="${cls}">`+arr.map(x=>`<li>${x}</li>`).join('')+`</ul>`;}
+function storyHTML(s){
+ return `<div class="story p${s.patch}" id="${s.id}" data-txt="${(s.id+' '+s.title+' '+s.persona+' '+s.section+' '+s.reg+' '+s.deps.join(' ')+' '+s.edge.join(' ')).replace(/<[^>]+>/g,'').replace(/"/g,'').toLowerCase()}">
+  <div class="story-h" onclick="this.parentElement.classList.toggle('open')">
+    <span class="sid">${s.id}</span><span class="stitle">${s.title}</span>
+    <span class="mbadge"><span class="moscow-dot ${s.moscow}" title="${s.moscow}"></span><span class="pts-chip">${s.pts}pt</span></span>
+    <span class="persona">Screen ${s.screen}<br>${s.persona}</span><span class="caret">▸</span></div>
+  <div class="story-b">
+    <div class="quote">As <b>${s.role}</b>,<br>I want <b>${s.want}</b>,<br>so that <b>${s.so}</b>.</div>
+    <div class="fld"><div class="flab">Acceptance criteria</div></div>${list(s.ac,'ac')}
+    <div class="fld"><div class="flab">Edge cases</div></div>${list(s.edge,'lst')}
+    <div class="fld"><div class="flab">Dependencies</div></div>${list(s.deps,'lst')}
+    <div class="fld"><div class="flab">Regulatory notes</div></div><div class="reg">${s.reg}</div>
+    <div class="fld"><div class="flab">Analytics events</div></div>${list(s.analytics.map(a=>`<span class="mono">${a}</span>`),'lst')}
+    <div class="metarow"><span class="mtag">App section · <b>${s.section}</b></span><span class="mtag">MoSCoW · <b>${s.moscow}</b></span><span class="mtag">WSJF · <b>${s.wsjf}</b></span><span class="mtag">Points · <b>${s.pts}</b></span></div>
+  </div></div>`;
+}
+let html='';let cur=0;
+STORIES.forEach(s=>{
+ if(s.patch!==cur){cur=s.patch;
+  html+=`<div class="patch-band p${cur}"><span class="pn">Patch ${cur}</span><span class="pd">${cur===1?'Landing → Pre-qual → Registration → Application → Offer · 13 stories':'Completion → E-Signature → Disbursement → Servicing · 7 stories'}</span></div>`;}
+ html+=storyHTML(s);
+});
+document.getElementById('stories').innerHTML=html;
+document.querySelector('.story').classList.add('open');
+document.getElementById('sprint').innerHTML=STORIES.map(s=>
+ `<tr><td class="mono"><b>${s.id}</b></td><td class="c">P${s.patch}</td><td>${s.title}</td><td class="c">${s.moscow}</td><td class="c">${s.wsjf}</td><td class="c">${s.pts}</td></tr>`).join('');
+
+document.getElementById('search').addEventListener('input',e=>{
+ const q=e.target.value.trim().toLowerCase();
+ document.querySelectorAll('.story').forEach(el=>{const hit=!q||el.dataset.txt.includes(q);el.style.display=hit?'':'none';if(q&&hit)el.classList.add('open');});
+ document.querySelectorAll('.patch-band').forEach(b=>b.style.display=q?'none':'');
+});
+function expandAll(v){document.querySelectorAll('.story').forEach(el=>el.classList.toggle('open',v));}
+const links=[...document.querySelectorAll('#toc a[data-t]')];
+const io=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting)links.forEach(l=>l.classList.toggle('on',l.getAttribute('href')==='#'+en.target.id));});},{rootMargin:'-90px 0px -75% 0px'});
+document.querySelectorAll('.story').forEach(el=>{if(el.id)io.observe(el);});
+document.getElementById('foot').innerHTML=`Mobile Journey · Source of Truth — Patch 1 + 2 · 20 stories · generated ${new Date().toISOString().slice(0,10)} · draft for CP-board review (not posted)<br>Tasheel Finance · <a href="https://www.linkedin.com/in/emadayyash" target="_blank">Emad Ayyash</a>`;
+</script>
+</body></html>
