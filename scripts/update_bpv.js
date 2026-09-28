@@ -270,11 +270,16 @@ const monthlyFunnel = Object.keys(monthlyFunnelMap).sort().map(mon => {
 
 console.log('  Funnel months: %d', monthlyFunnel.length);
 
-// ── 5. Read SIMAH data ───────────────────────────────────────────────
-console.log('Reading SIMAH_Intelligence.html …');
-const simHtml = fs.readFileSync(SIM_HTML, 'utf8');
-const SIMAH = extractJSON(simHtml, 'SIMAH_DATA');
-console.log('  SIMAH total: %d, matched: %d', SIMAH.meta.total, SIMAH.meta.matched);
+// ── 5. Read SIMAH data (optional — dashboard not present on every machine) ──
+let SIMAH = null;
+if (fs.existsSync(SIM_HTML)) {
+  console.log('Reading SIMAH_Intelligence.html …');
+  const simHtml = fs.readFileSync(SIM_HTML, 'utf8');
+  SIMAH = extractJSON(simHtml, 'SIMAH_DATA');
+  console.log('  SIMAH total: %d, matched: %d', SIMAH.meta.total, SIMAH.meta.matched);
+} else {
+  console.log('SIMAH_Intelligence.html not found — skipping SIMAH section.');
+}
 
 // ── 5a. Read Application Cost data ────────────────────────────────────
 console.log('Reading Application_Cost.html …');
