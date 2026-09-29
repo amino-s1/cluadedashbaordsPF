@@ -635,7 +635,7 @@ function renderKPI(){
       for(const cat in srcMap){const v=srcMap[cat]||0;tot+=v;if(String(cat).toLowerCase()==='backoffice')off+=v;}
       const onl=tot-off;
       const onlPct=tot?(onl/tot*100):0,offPct=tot?(off/tot*100):0;
-      srcSplitLine=`<div class="mom-note" style="opacity:.75;font-size:10px;margin-top:2px">Online ${fmt(onl)} (${onlPct.toFixed(0)}%) · Offline ${fmt(off)} (${offPct.toFixed(0)}%)</div>`;
+      srcSplitLine=`<div class="mom-note" style="opacity:.9;font-size:13px;font-weight:600;margin-top:4px">Online ${fmt(onl)} (${onlPct.toFixed(0)}%) · Offline ${fmt(off)} (${offPct.toFixed(0)}%)</div>`;
     }
     h+=`<div class="card kpi ${cls}"><div class="lab">${lab}</div><div class="big">${big}</div>${momBadge(mom)}<div class="mom-note">${avgline}</div>${uniqLine}${srcSplitLine}</div>`;
   });
