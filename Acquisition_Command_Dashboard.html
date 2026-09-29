@@ -599,7 +599,8 @@ function computeCUR(){
   const L=daysInRange(from,to);const pwFrom=addDays(from,-L),pwTo=addDays(from,-1);
   const decPrev=sumRange(pwFrom,pwTo).dec;
   const uniq=(window.__engine&&window.__engine.uniqueApplicantStats)?window.__engine.uniqueApplicantStats(from,to):null;
-  CUR={cur,curDays,comp,compDays,cmLabel:MONTH(cmFrom),from,to,decPrev,pwLabel:prettyD(pwFrom)+'–'+prettyD(pwTo),uniq};
+  const srcSplit=(window.__engine&&window.__engine.sourceSplitUnique)?window.__engine.sourceSplitUnique(from,to):null;
+  CUR={cur,curDays,comp,compDays,cmLabel:MONTH(cmFrom),from,to,decPrev,pwLabel:prettyD(pwFrom)+'–'+prettyD(pwTo),uniq,srcSplit};
 }
 
 /* ============ KPI ============ */
@@ -622,20 +623,20 @@ function renderKPI(){
     let big=(typ==='m'||typ==='a')?money(curV):(typ==='t'?(curV?curV.toFixed(1):'—')+' mo':typ==='u'?(curV?(curV*100).toFixed(1):'—')+'%':fmt(curV));
     let uniqLine='';
     if(UNIQ_KEYS.has(key)){const u=c.uniq&&c.uniq[key];if(u!=null)uniqLine=`<div class="mom-note" style="opacity:.75;font-size:10px;margin-top:2px">${fmt(u)} unique applicants</div>`;}
-    // Online vs offline split for the Submissions card only -- SubmitSource
-    // "backoffice" counts as offline, every other value (UI, Android,
-    // Android-S, IOS-S, Unknown, ...) counts as online. Uses the same
-    // range-filtered per-day source breakdown (c.cur.d.source.sub) the
-    // "Submit source" donut and "Online (UI) vs Back Office" trend already
-    // read from, so it always matches the selected date range.
+    // Online vs offline split for the Submissions card only -- by UNIQUE
+    // applicant (civil ID), not by raw submission row, so an applicant who
+    // submitted through both channels in range isn't counted in both
+    // buckets. SubmitSource "backoffice" = offline, every other value (UI,
+    // Android, Android-S, IOS-S, Unknown, ...) = online. Percentages are
+    // share of total unique applicants (same denominator as the "unique
+    // applicants" line above it).
     let srcSplitLine='';
     if(key==='sub'){
-      const srcMap=(c.cur.d.source&&c.cur.d.source.sub)||{};
-      let off=0,tot=0;
-      for(const cat in srcMap){const v=srcMap[cat]||0;tot+=v;if(String(cat).toLowerCase()==='backoffice')off+=v;}
-      const onl=tot-off;
-      const onlPct=tot?(onl/tot*100):0,offPct=tot?(off/tot*100):0;
-      srcSplitLine=`<div class="mom-note" style="opacity:.9;font-size:13px;font-weight:600;margin-top:4px">Online ${fmt(onl)} (${onlPct.toFixed(0)}%) · Offline ${fmt(off)} (${offPct.toFixed(0)}%)</div>`;
+      const s=c.srcSplit,totUniq=(c.uniq&&c.uniq.sub)||0;
+      if(s&&totUniq){
+        const onlPct=s.online/totUniq*100,offPct=s.offline/totUniq*100,bothPct=s.both/totUniq*100;
+        srcSplitLine=`<div class="mom-note" style="opacity:.9;font-size:13px;font-weight:600;margin-top:4px">Online ${fmt(s.online)} (${onlPct.toFixed(0)}%) · Offline ${fmt(s.offline)} (${offPct.toFixed(0)}%) · Both ${fmt(s.both)} (${bothPct.toFixed(0)}%)</div>`;
+      }
     }
     h+=`<div class="card kpi ${cls}"><div class="lab">${lab}</div><div class="big">${big}</div>${momBadge(mom)}<div class="mom-note">${avgline}</div>${uniqLine}${srcSplitLine}</div>`;
   });
@@ -1507,6 +1508,27 @@ const RAWSTORE = {"n":235192,"dates":["2026-06-06","2026-06-08","2026-06-09","20
     }
     return {sub:subSet.size, init:initSet.size, final:finalSet.size, book:bookSet.size};
   }
+  // Online/offline split by UNIQUE applicant (civil ID), not by raw submission
+  // row -- an applicant who submitted through both channels in the same range
+  // would otherwise get counted once in each bucket, inflating both sides.
+  // Three mutually exclusive buckets (online-only / offline-only / both) sum
+  // exactly to uniqueApplicantStats(from,to).sub. backoffice = offline, every
+  // other SubmitSource value (UI, Android, Android-S, IOS-S, Unknown, ...) =
+  // online -- same rule as the "Submit source" donut and the KPI card.
+  function sourceSplitUnique(from,to){
+    const civ=RS.civIdx,sd=RS.sday,src=RS.source,vocab=VOCAB.source;
+    const online=new Set(),offline=new Set();
+    for(let i=0;i<N;i++){
+      const c=civ[i]; if(c===NO_CIV) continue;
+      const si=sd[i]; if(si<0 || DTS[si]<from || DTS[si]>to) continue;
+      const val=vocab[src[i]];
+      if(val && String(val).toLowerCase()==='backoffice') offline.add(c); else online.add(c);
+    }
+    let both=0;
+    for(const c of online){ if(offline.has(c)) both++; }
+    const onlineOnly=online.size-both, offlineOnly=offline.size-both;
+    return {online:onlineOnly, offline:offlineOnly, both, total:onlineOnly+offlineOnly+both};
+  }
   // Income split (<15K vs 15K+) daily trend + avg item value of the (eventually
   // booked) submissions in each band, both keyed by submitted date.
   function incomeSplitTrend(spec){
@@ -1957,7 +1979,7 @@ const RAWSTORE = {"n":235192,"dates":["2026-06-06","2026-06-08","2026-06-09","20
     const prev=windowMetricsFull(prevFrom,prevTo);
     return {cur:{...cur,from:RANGE.from,to:RANGE.to},prev:{...prev,from:prevFrom,to:prevTo}};
   }
-  window.__engine={aggFromRaw,DAILY_FULL,setFilter:toggleFilter,clear:clearFilters,N:N,FILTERS:()=>FILTERS,VOCAB,dimDailyTrend,rateDailyTrend,dimBreakdown,initFinalDailyTrend,sameMonthBookingTrend,notesAggregate,sourceEmployerCorrelation,summaryDailyExtremes,topSegments,dropoffAnalysis,momComparison,uniqueApplicantStats,incomeSplitTrend,duplicateCustomerAnalysis,topCompanies,approvedNotBooked,approvedNotBookedDetail,pendingFinalApprovalInRange};
+  window.__engine={aggFromRaw,DAILY_FULL,setFilter:toggleFilter,clear:clearFilters,N:N,FILTERS:()=>FILTERS,VOCAB,dimDailyTrend,rateDailyTrend,dimBreakdown,initFinalDailyTrend,sameMonthBookingTrend,notesAggregate,sourceEmployerCorrelation,summaryDailyExtremes,topSegments,dropoffAnalysis,momComparison,uniqueApplicantStats,sourceSplitUnique,incomeSplitTrend,duplicateCustomerAnalysis,topCompanies,approvedNotBooked,approvedNotBookedDetail,pendingFinalApprovalInRange};
   console.log('[interactive engine] ready · '+fmt(N)+' rows decoded');
   // The very first computeCUR()/renderKPI() call (page bootstrap) can run
   // before this engine is ready, leaving engine-dependent bits (unique
