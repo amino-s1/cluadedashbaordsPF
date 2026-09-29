@@ -622,7 +622,22 @@ function renderKPI(){
     let big=(typ==='m'||typ==='a')?money(curV):(typ==='t'?(curV?curV.toFixed(1):'—')+' mo':typ==='u'?(curV?(curV*100).toFixed(1):'—')+'%':fmt(curV));
     let uniqLine='';
     if(UNIQ_KEYS.has(key)){const u=c.uniq&&c.uniq[key];if(u!=null)uniqLine=`<div class="mom-note" style="opacity:.75;font-size:10px;margin-top:2px">${fmt(u)} unique applicants</div>`;}
-    h+=`<div class="card kpi ${cls}"><div class="lab">${lab}</div><div class="big">${big}</div>${momBadge(mom)}<div class="mom-note">${avgline}</div>${uniqLine}</div>`;
+    // Online vs offline split for the Submissions card only -- SubmitSource
+    // "backoffice" counts as offline, every other value (UI, Android,
+    // Android-S, IOS-S, Unknown, ...) counts as online. Uses the same
+    // range-filtered per-day source breakdown (c.cur.d.source.sub) the
+    // "Submit source" donut and "Online (UI) vs Back Office" trend already
+    // read from, so it always matches the selected date range.
+    let srcSplitLine='';
+    if(key==='sub'){
+      const srcMap=(c.cur.d.source&&c.cur.d.source.sub)||{};
+      let off=0,tot=0;
+      for(const cat in srcMap){const v=srcMap[cat]||0;tot+=v;if(String(cat).toLowerCase()==='backoffice')off+=v;}
+      const onl=tot-off;
+      const onlPct=tot?(onl/tot*100):0,offPct=tot?(off/tot*100):0;
+      srcSplitLine=`<div class="mom-note" style="opacity:.75;font-size:10px;margin-top:2px">Online ${fmt(onl)} (${onlPct.toFixed(0)}%) · Offline ${fmt(off)} (${offPct.toFixed(0)}%)</div>`;
+    }
+    h+=`<div class="card kpi ${cls}"><div class="lab">${lab}</div><div class="big">${big}</div>${momBadge(mom)}<div class="mom-note">${avgline}</div>${uniqLine}${srcSplitLine}</div>`;
   });
   // Pending Final Approval: now dynamic, filtered to the selected date
   // range by submitted date (same basis as the KPI cards above) -- changed
