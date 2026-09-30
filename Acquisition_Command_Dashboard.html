@@ -1086,23 +1086,31 @@ function ncSvg(cfg,J,ser){
     if(n<=70||cfg.kind==='n')pts.forEach(q=>{g+='<circle cx="'+X(q[0]).toFixed(1)+'" cy="'+Y(q[1]).toFixed(1)+'" r="3" fill="'+s.color+'"><title>'+ncEsc(s.label)+' · '+prettyD(rows[q[0]].date)+' · '+ncFmt(q[1],cfg.kind)+'</title></circle>';});
   });
   if(cfg.kind==='n'){
-    // One summed label per day (not one per series) -- avoids overlapping
-    // digits where two or more lines cross or land on the same value. A
-    // larger invisible hover target sits above that day's highest point and
-    // carries the full per-source breakdown, so hovering near the top of any
-    // day's stack shows every visible source's count for that day, not just
-    // whichever line happens to be under the cursor.
+    // Label each day's points by VALUE group, not by day. Where only one
+    // visible series sits at a given value that day, it gets its own
+    // individual colored label at its own point (same as every other
+    // chart). Where two or more series land on the exact same value (a
+    // real visual intersection -- their dots and lines coincide), those
+    // are merged into a single summed label with a hover breakdown, so
+    // nothing overlaps illegibly and nothing gets merged that isn't
+    // actually sitting on top of something else.
     for(let i=0;i<n;i++){
-      let tot=0,topY=null;const parts=[];
+      const groups={};
       ser.forEach(s=>{
         const v=s.get(rows[i]);const vv=(v==null||!isFinite(v))?0:v;
-        tot+=vv;parts.push(ncEsc(s.label)+': '+fmt(vv));
-        const y=Y(vv);if(topY==null||y<topY)topY=y;
+        (groups[vv]=groups[vv]||[]).push({s,vv});
       });
-      if(topY==null)continue;
-      const tip=prettyD(rows[i].date)+' · '+parts.join(' · ')+' · Total: '+fmt(tot);
-      g+='<circle cx="'+X(i).toFixed(1)+'" cy="'+(topY-9).toFixed(1)+'" r="9" fill="transparent"><title>'+tip+'</title></circle>';
-      g+='<text x="'+X(i).toFixed(1)+'" y="'+(topY-7).toFixed(1)+'" text-anchor="middle" font-size="10" font-weight="700" fill="#2a3550">'+fmt(tot)+'</text>';
+      Object.keys(groups).forEach(vk=>{
+        const grp=groups[vk],v=+vk,y=Y(v);
+        if(grp.length===1){
+          g+='<text x="'+X(i).toFixed(1)+'" y="'+(y-7).toFixed(1)+'" text-anchor="middle" font-size="9.5" font-weight="700" fill="'+grp[0].s.color+'">'+fmt(v)+'</text>';
+          return;
+        }
+        const tot=grp.reduce((a,m)=>a+m.vv,0);
+        const tip=prettyD(rows[i].date)+' · '+grp.map(m=>ncEsc(m.s.label)+': '+fmt(m.vv)).join(' · ')+' · Total: '+fmt(tot);
+        g+='<circle cx="'+X(i).toFixed(1)+'" cy="'+(y-9).toFixed(1)+'" r="9" fill="transparent"><title>'+tip+'</title></circle>';
+        g+='<text x="'+X(i).toFixed(1)+'" y="'+(y-7).toFixed(1)+'" text-anchor="middle" font-size="10" font-weight="700" fill="#2a3550">'+fmt(tot)+'</text>';
+      });
     }
   }
   return '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+ncEsc(cfg.title)+'">'+g+'</svg>';
