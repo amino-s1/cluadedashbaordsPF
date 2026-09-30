@@ -1083,7 +1083,7 @@ function ncSvg(cfg,J,ser){
     g+='<path d="'+p+'" fill="none" stroke="'+s.color+'" stroke-width="2.2"'+(s.dash?' stroke-dasharray="6 4"':'')+'/>';
     if(cfg.trend&&pts.length>2){const m=pts.length,sx=pts.reduce((a,q)=>a+q[0],0),sy=pts.reduce((a,q)=>a+q[1],0),sxy=pts.reduce((a,q)=>a+q[0]*q[1],0),sxx=pts.reduce((a,q)=>a+q[0]*q[0],0),den=m*sxx-sx*sx;
       if(den){const b=(m*sxy-sx*sy)/den,a=(sy-b*sx)/m,i0=pts[0][0],i1=pts[m-1][0];g+='<line x1="'+X(i0)+'" y1="'+Y(a+b*i0)+'" x2="'+X(i1)+'" y2="'+Y(a+b*i1)+'" stroke="'+s.color+'" stroke-width="1.6" stroke-dasharray="1.5 4" stroke-linecap="round" opacity=".85"/>';}}
-    if(n<=70)pts.forEach(q=>{g+='<circle cx="'+X(q[0]).toFixed(1)+'" cy="'+Y(q[1]).toFixed(1)+'" r="3" fill="'+s.color+'"><title>'+ncEsc(s.label)+' · '+prettyD(rows[q[0]].date)+' · '+ncFmt(q[1],cfg.kind)+'</title></circle>';
+    if(n<=70||cfg.kind==='n')pts.forEach(q=>{g+='<circle cx="'+X(q[0]).toFixed(1)+'" cy="'+Y(q[1]).toFixed(1)+'" r="3" fill="'+s.color+'"><title>'+ncEsc(s.label)+' · '+prettyD(rows[q[0]].date)+' · '+ncFmt(q[1],cfg.kind)+'</title></circle>';
       if(cfg.kind==='n')g+='<text x="'+X(q[0]).toFixed(1)+'" y="'+(Y(q[1])-7).toFixed(1)+'" text-anchor="middle" font-size="9.5" font-weight="700" fill="'+s.color+'">'+fmt(q[1])+'</text>';
     });
   });
