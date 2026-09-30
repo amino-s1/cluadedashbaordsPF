@@ -991,6 +991,10 @@ const NC_C={g:'#129d4e',dg:'#0b6b34',r:'#dc2743',v:'#6f5be0',b:'#2f92e6',a:'#d99
 function ncEsc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 const ncS=(label,color,num,den,dash)=>({label,color,dash:!!dash,num,den,get:d=>{const m=den(d);return m?num(d)/m*100:null;}});
 const ncV=(label,color,get,dash)=>({label,color,dash:!!dash,get:d=>{const v=get(d);return v>0?v:null;}});
+// Like ncV, but keeps 0 as a real point instead of treating it as a gap --
+// use for counts where "0 that day" is a meaningful value (e.g. Digital
+// Booking), not for things like median income where 0 means "no data".
+const ncN=(label,color,get,dash)=>({label,color,dash:!!dash,get:d=>{const v=get(d);return v==null||!isFinite(v)?null:v;}});
 const ncFmt=(v,kind)=>v==null||!isFinite(v)?'—':kind==='money'?'SAR '+Math.round(v).toLocaleString():kind==='n'?fmt(Math.round(v)):v.toFixed(1)+'%';
 function ncCallout(html){return '<div class="nc-callout">'+html+'</div>';}
 const NC_FLOW='<p><b>Flow:</b> For Tawarruq (the online journey), GOSI/MOF now runs before Qarar/SIMAH: no GOSI/MOF data parks the application in NINJA instead of calling Qarar/SIMAH. Combo is different -- it still gates Qarar/SIMAH on declared income, not on GOSI/MOF. Once Qarar/SIMAH does run: a failed internal check declines without calling Qarar; a Qarar decline never reaches SIMAH (no risk grade). Qarar costs SAR 6 and SIMAH adds SAR 18, so skipping SIMAH on a decline is intentional cost saving.</p>';
@@ -1033,7 +1037,7 @@ function ncConfigs(J){
    series:()=>[ncS('UI',C.g,d=>d.ss_ui,d=>d.subs),ncS('Backoffice',C.b,d=>d.ss_backoffice,d=>d.subs),ncS('Android',C.v,d=>d.ss_android,d=>d.subs),ncS('Android-S',C.v,d=>d.ss_android_s,d=>d.subs,true),ncS('iOS (IOS-S)',C.a,d=>d.ss_ios,d=>d.subs)],
    callout:'<p><b>Read:</b> share of daily submissions coming from each channel, one line per real SubmitSource value in the data -- UI, backoffice, Android, Android-S (dashed, same color family as Android since both are the Android app), and iOS. UI and backoffice make up almost all volume; the three app channels are a small, recent slice of it. A handful of rows elsewhere in the full history have a blank SubmitSource (none in this window), so no line is drawn for that.</p>'},
   {id:'nc13',num:'13',title:'Digital Booking',sub:'Daily count of fully digital bookings (STB_Status = Booked_Full_STB), by booking date, split by the same SubmitSource channels as the Submission Source Trend chart.',rows:T,kind:'n',
-   series:()=>[ncV('UI',C.g,d=>d.db_ui),ncV('Backoffice',C.b,d=>d.db_backoffice),ncV('Android',C.v,d=>d.db_android),ncV('Android-S',C.v,d=>d.db_android_s,true),ncV('iOS (IOS-S)',C.a,d=>d.db_ios)],
+   series:()=>[ncN('UI',C.g,d=>d.db_ui),ncN('Backoffice',C.b,d=>d.db_backoffice),ncN('Android',C.v,d=>d.db_android),ncN('Android-S',C.v,d=>d.db_android_s,true),ncN('iOS (IOS-S)',C.a,d=>d.db_ios)],
    callout:'<p><b>Read:</b> count of applications booked that day whose STB_Status is Booked_Full_STB -- a fully digital, straight-through booking (as opposed to NonSTB_Booked or PermissionToServe) -- one line per SubmitSource channel used at submission, same colors as the Submission Source Trend chart above. Bucketed by booking date (SalesCompletedDate), the same convention as the Daily booking count chart on the Performance tab -- NOT by submission date like most other New Change cards. Booked_Full_STB is rare (301 of 239K applications in the full dataset), so expect small daily counts.</p>'}
   ];
 }
@@ -1079,7 +1083,9 @@ function ncSvg(cfg,J,ser){
     g+='<path d="'+p+'" fill="none" stroke="'+s.color+'" stroke-width="2.2"'+(s.dash?' stroke-dasharray="6 4"':'')+'/>';
     if(cfg.trend&&pts.length>2){const m=pts.length,sx=pts.reduce((a,q)=>a+q[0],0),sy=pts.reduce((a,q)=>a+q[1],0),sxy=pts.reduce((a,q)=>a+q[0]*q[1],0),sxx=pts.reduce((a,q)=>a+q[0]*q[0],0),den=m*sxx-sx*sx;
       if(den){const b=(m*sxy-sx*sy)/den,a=(sy-b*sx)/m,i0=pts[0][0],i1=pts[m-1][0];g+='<line x1="'+X(i0)+'" y1="'+Y(a+b*i0)+'" x2="'+X(i1)+'" y2="'+Y(a+b*i1)+'" stroke="'+s.color+'" stroke-width="1.6" stroke-dasharray="1.5 4" stroke-linecap="round" opacity=".85"/>';}}
-    if(n<=70)pts.forEach(q=>{g+='<circle cx="'+X(q[0]).toFixed(1)+'" cy="'+Y(q[1]).toFixed(1)+'" r="3" fill="'+s.color+'"><title>'+ncEsc(s.label)+' · '+prettyD(rows[q[0]].date)+' · '+ncFmt(q[1],cfg.kind)+'</title></circle>';});
+    if(n<=70)pts.forEach(q=>{g+='<circle cx="'+X(q[0]).toFixed(1)+'" cy="'+Y(q[1]).toFixed(1)+'" r="3" fill="'+s.color+'"><title>'+ncEsc(s.label)+' · '+prettyD(rows[q[0]].date)+' · '+ncFmt(q[1],cfg.kind)+'</title></circle>';
+      if(cfg.kind==='n')g+='<text x="'+X(q[0]).toFixed(1)+'" y="'+(Y(q[1])-7).toFixed(1)+'" text-anchor="middle" font-size="9.5" font-weight="700" fill="'+s.color+'">'+fmt(q[1])+'</text>';
+    });
   });
   return '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+ncEsc(cfg.title)+'">'+g+'</svg>';
 }
