@@ -1083,10 +1083,28 @@ function ncSvg(cfg,J,ser){
     g+='<path d="'+p+'" fill="none" stroke="'+s.color+'" stroke-width="2.2"'+(s.dash?' stroke-dasharray="6 4"':'')+'/>';
     if(cfg.trend&&pts.length>2){const m=pts.length,sx=pts.reduce((a,q)=>a+q[0],0),sy=pts.reduce((a,q)=>a+q[1],0),sxy=pts.reduce((a,q)=>a+q[0]*q[1],0),sxx=pts.reduce((a,q)=>a+q[0]*q[0],0),den=m*sxx-sx*sx;
       if(den){const b=(m*sxy-sx*sy)/den,a=(sy-b*sx)/m,i0=pts[0][0],i1=pts[m-1][0];g+='<line x1="'+X(i0)+'" y1="'+Y(a+b*i0)+'" x2="'+X(i1)+'" y2="'+Y(a+b*i1)+'" stroke="'+s.color+'" stroke-width="1.6" stroke-dasharray="1.5 4" stroke-linecap="round" opacity=".85"/>';}}
-    if(n<=70||cfg.kind==='n')pts.forEach(q=>{g+='<circle cx="'+X(q[0]).toFixed(1)+'" cy="'+Y(q[1]).toFixed(1)+'" r="3" fill="'+s.color+'"><title>'+ncEsc(s.label)+' · '+prettyD(rows[q[0]].date)+' · '+ncFmt(q[1],cfg.kind)+'</title></circle>';
-      if(cfg.kind==='n')g+='<text x="'+X(q[0]).toFixed(1)+'" y="'+(Y(q[1])-7).toFixed(1)+'" text-anchor="middle" font-size="9.5" font-weight="700" fill="'+s.color+'">'+fmt(q[1])+'</text>';
-    });
+    if(n<=70||cfg.kind==='n')pts.forEach(q=>{g+='<circle cx="'+X(q[0]).toFixed(1)+'" cy="'+Y(q[1]).toFixed(1)+'" r="3" fill="'+s.color+'"><title>'+ncEsc(s.label)+' · '+prettyD(rows[q[0]].date)+' · '+ncFmt(q[1],cfg.kind)+'</title></circle>';});
   });
+  if(cfg.kind==='n'){
+    // One summed label per day (not one per series) -- avoids overlapping
+    // digits where two or more lines cross or land on the same value. A
+    // larger invisible hover target sits above that day's highest point and
+    // carries the full per-source breakdown, so hovering near the top of any
+    // day's stack shows every visible source's count for that day, not just
+    // whichever line happens to be under the cursor.
+    for(let i=0;i<n;i++){
+      let tot=0,topY=null;const parts=[];
+      ser.forEach(s=>{
+        const v=s.get(rows[i]);const vv=(v==null||!isFinite(v))?0:v;
+        tot+=vv;parts.push(ncEsc(s.label)+': '+fmt(vv));
+        const y=Y(vv);if(topY==null||y<topY)topY=y;
+      });
+      if(topY==null)continue;
+      const tip=prettyD(rows[i].date)+' · '+parts.join(' · ')+' · Total: '+fmt(tot);
+      g+='<circle cx="'+X(i).toFixed(1)+'" cy="'+(topY-9).toFixed(1)+'" r="9" fill="transparent"><title>'+tip+'</title></circle>';
+      g+='<text x="'+X(i).toFixed(1)+'" y="'+(topY-7).toFixed(1)+'" text-anchor="middle" font-size="10" font-weight="700" fill="#2a3550">'+fmt(tot)+'</text>';
+    }
+  }
   return '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+ncEsc(cfg.title)+'">'+g+'</svg>';
 }
 function ncCsv(cfg){
@@ -1269,7 +1287,14 @@ function renderNewChange(){
   const root=document.getElementById('nc-root'),J=cD.journey;
   if(!J||!J.trends30||!J.trends30.length){root.innerHTML='<p class="cap">No journey data in this dataset. Rebuild the dashboard with the latest update_acquisition_dashboard.js.</p>';return;}
   const DBW=J.digitalBooking&&J.digitalBooking.trend&&J.digitalBooking.trend.length?J.digitalBooking:{trend:[],min:J.windowStart,max:J.windowEnd};
-  if(!DB_RANGE)DB_RANGE={from:DBW.min,to:DBW.max};
+  if(!DB_RANGE){
+    // Default: start of the current calendar month through yesterday (same
+    // "yesterday" convention as capToYesterday elsewhere), clamped to the
+    // data's actual min/max so an empty or out-of-range default is never
+    // shown. "Full history" still resets to the true full DBW.min..DBW.max.
+    const today=new Date(),som=ymd(new Date(today.getFullYear(),today.getMonth(),1)),to=capToYesterday(DBW.max);
+    DB_RANGE={from:som<DBW.min?DBW.min:(som>to?to:som),to};
+  }
   else DB_RANGE={from:DB_RANGE.from<DBW.min?DBW.min:DB_RANGE.from,to:DB_RANGE.to>DBW.max?DBW.max:DB_RANGE.to};
   NC.cfgs=ncConfigs(J);
   let h='<div class="nc-top"><span class="nc-pill">Viewing: '+prettyD(J.windowStart)+' – '+prettyD(J.windowEnd)+' · '+J.trends30.length+' complete days</span><span class="nc-crumb">'+ncEsc((document.querySelector('.t')||{textContent:'Dashboard'}).textContent)+' › <b>New change</b> › Journey Change Impact</span></div>';
