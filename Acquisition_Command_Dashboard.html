@@ -1037,7 +1037,7 @@ function ncConfigs(J){
    series:()=>[ncS('UI',C.g,d=>d.ss_ui,d=>d.subs),ncS('Backoffice',C.b,d=>d.ss_backoffice,d=>d.subs),ncS('Android',C.v,d=>d.ss_android,d=>d.subs),ncS('Android-S',C.v,d=>d.ss_android_s,d=>d.subs,true),ncS('iOS (IOS-S)',C.a,d=>d.ss_ios,d=>d.subs)],
    callout:'<p><b>Read:</b> share of daily submissions coming from each channel, one line per real SubmitSource value in the data -- UI, backoffice, Android, Android-S (dashed, same color family as Android since both are the Android app), and iOS. UI and backoffice make up almost all volume; the three app channels are a small, recent slice of it. A handful of rows elsewhere in the full history have a blank SubmitSource (none in this window), so no line is drawn for that.</p>'},
   {id:'nc13',num:'13',title:'Digital Booking',sub:'Daily count of fully digital bookings (STB_Status = Booked_Full_STB), by booking date, split by the same SubmitSource channels as the Submission Source Trend chart (Backoffice excluded -- not a digital channel). Covers the full history of this data, not just the journey-comparison window above -- has its own From/To filter below, independent of every other New Change card. Click a line in the legend to isolate it where lines cross.',rows:((J.digitalBooking&&J.digitalBooking.trend)||[]).filter(d=>d.date>=DB_RANGE.from&&d.date<=DB_RANGE.to),kind:'n',hasOwnDateFilter:true,
-   series:()=>[ncN('UI',C.g,d=>d.db_ui),ncN('Android',C.v,d=>d.db_android),ncN('Android-S',C.v,d=>d.db_android_s,true),ncN('iOS (IOS-S)',C.a,d=>d.db_ios)],
+   series:()=>[ncN('UI',C.g,d=>d.db_ui),ncN('Android',C.v,d=>d.db_android),ncN('Android-S',C.v,d=>d.db_android_s,true),ncN('iOS (IOS-S)',C.a,d=>d.db_ios)].filter(s=>DB_SOURCE==='all'||s.label===DB_SOURCE),
    callout:'<p><b>Read:</b> count of applications booked that day whose STB_Status is Booked_Full_STB -- a fully digital, straight-through booking (as opposed to NonSTB_Booked or PermissionToServe) -- one line per digital SubmitSource channel used at submission (UI, Android, Android-S, iOS), same colors as the Submission Source Trend chart above. Backoffice is excluded here since it is not a digital channel. Bucketed by booking date (SalesCompletedDate), the same convention as the Daily booking count chart on the Performance tab -- NOT by submission date like most other New Change cards. Booked_Full_STB is rare (301 of 239K applications in the full dataset), so expect small daily counts.</p>'}
   ];
 }
@@ -1261,6 +1261,10 @@ function ncRenderChangeAnalysis(J){
 // (never extend past it -- T has no data outside it). Persists across
 // re-renders of this tab; reset to null (full window) on first load.
 let DB_RANGE=null;
+// Digital Booking's source filter -- 'all' or one of the four channel
+// labels used by its series() above. Persists across re-renders.
+let DB_SOURCE='all';
+const DB_SOURCES=['UI','Android','Android-S','iOS (IOS-S)'];
 function renderNewChange(){
   const root=document.getElementById('nc-root'),J=cD.journey;
   if(!J||!J.trends30||!J.trends30.length){root.innerHTML='<p class="cap">No journey data in this dataset. Rebuild the dashboard with the latest update_acquisition_dashboard.js.</p>';return;}
@@ -1269,19 +1273,20 @@ function renderNewChange(){
   else DB_RANGE={from:DB_RANGE.from<DBW.min?DBW.min:DB_RANGE.from,to:DB_RANGE.to>DBW.max?DBW.max:DB_RANGE.to};
   NC.cfgs=ncConfigs(J);
   let h='<div class="nc-top"><span class="nc-pill">Viewing: '+prettyD(J.windowStart)+' – '+prettyD(J.windowEnd)+' · '+J.trends30.length+' complete days</span><span class="nc-crumb">'+ncEsc((document.querySelector('.t')||{textContent:'Dashboard'}).textContent)+' › <b>New change</b> › Journey Change Impact</span></div>';
-  NC.cfgs.forEach(c=>{const dbBar=c.hasOwnDateFilter?'<div class="datebar" style="margin:10px 0 2px"><div class="dfield"><label>From</label><input type="date" id="db-from" min="'+DBW.min+'" max="'+DBW.max+'" value="'+DB_RANGE.from+'"></div><div class="dfield"><label>To</label><input type="date" id="db-to" min="'+DBW.min+'" max="'+DBW.max+'" value="'+DB_RANGE.to+'"></div><button class="btn" id="db-reset">Full history</button></div>':'';
+  NC.cfgs.forEach(c=>{const dbBar=c.hasOwnDateFilter?'<div class="datebar" style="margin:10px 0 2px"><div class="dfield"><label>From</label><input type="date" id="db-from" min="'+DBW.min+'" max="'+DBW.max+'" value="'+DB_RANGE.from+'"></div><div class="dfield"><label>To</label><input type="date" id="db-to" min="'+DBW.min+'" max="'+DBW.max+'" value="'+DB_RANGE.to+'"></div><button class="btn" id="db-reset">Full history</button><div class="dfield"><label>Source</label><select id="db-source" class="dd-filter"><option value="all"'+(DB_SOURCE==='all'?' selected':'')+'>All sources</option>'+DB_SOURCES.map(s=>'<option value="'+ncEsc(s)+'"'+(DB_SOURCE===s?' selected':'')+'>'+ncEsc(s)+'</option>').join('')+'</select></div></div>':'';
     h+='<div class="card nc-card" id="'+c.id+'"><div class="nc-h"><span class="k">'+c.num+'</span><h3>'+ncEsc(c.title)+'</h3>'+(c.toggle?'<span class="nc-tog"><button data-m="med" class="on">Median</button><button data-m="avg">Average (≤ SAR 500K)</button></span>':'')+'<button class="btn nc-dl" data-id="'+c.id+'">Download data (CSV)</button></div><div class="nc-sub">'+ncEsc(c.sub)+'</div>'+dbBar+'<div class="nc-chart"></div><div class="nc-legend"></div><div class="nc-delta-slot"></div>'+ncCallout(c.callout)+'</div>';});
   h+="<div class=\"sec-h\" style=\"margin-top:30px\"><span class=\"k\">CHANGE</span><h2>Journey change: before vs after 10 Sep</h2><span class=\"hint\">GOSI/MOF now runs before Qarar/SIMAH — no GOSI/MOF data parks the application in NINJA instead of calling Qarar/SIMAH</span></div>\n\n<div class=\"card nc-card\" id=\"nc-lu\">\n  <div class=\"nc-h\"><span class=\"k\">A</span><h3>Booked loans by company status</h3></div>\n  <div class=\"nc-sub\">Company status from your system's approved-company list (Cat A/B/C, Blacklisted, Rejected, Deleted) matched by company name; not on the list at all = Unlisted. Booked, bucketed by booking date. See the coverage caveat below before reading the shares.</div>\n  <div id=\"nc-lu-table\"></div>\n  <div id=\"nc-lu-rate\"></div>\n  <div id=\"nc-lu-ref\"></div>\n</div>\n\n<div class=\"card nc-card\" id=\"nc-cost\">\n  <div class=\"nc-h\"><span class=\"k\">B</span><h3>Cost-benefit: verification cost per application</h3></div>\n  <div class=\"nc-sub\">GOSI SAR 4.86 · MOF SAR 10.35 · Qarar SAR 5.98 · SIMAH SAR 18.40 — same rates as Application Cost. Qarar and SIMAH are only called when GOSI/MOF returned data.</div>\n  <div class=\"grid k7\" id=\"nc-cost-kpis\" style=\"margin:12px 0\"></div>\n  <div id=\"nc-cost-table\"></div>\n  <div id=\"nc-cost-note\"></div>\n</div>\n\n<div class=\"card nc-card\" id=\"nc-emp\">\n  <div class=\"nc-h\"><span class=\"k\">C</span><h3>Which employer type benefited</h3></div>\n  <div class=\"nc-sub\">Booking rate = booked ÷ submitted, same employer type, same period.</div>\n  <div id=\"nc-emp-table\"></div>\n  <div id=\"nc-emp-note\"></div>\n</div>\n\n<div class=\"card nc-card\" id=\"nc-insights\">\n  <div class=\"nc-h\"><span class=\"k\">D</span><h3>Insights</h3></div>\n  <ul class=\"nc-insights\" id=\"nc-insights-list\"></ul>\n</div>\n\n";
   root.innerHTML=h;
   NC.cfgs.forEach(c=>ncPaint(c,J));
   root.querySelectorAll('.nc-dl').forEach(b=>b.addEventListener('click',()=>ncCsv(NC.cfgs.find(c=>c.id===b.dataset.id))));
   root.querySelectorAll('.nc-tog button').forEach(b=>b.addEventListener('click',()=>{NC.mode=b.dataset.m;root.querySelectorAll('.nc-tog button').forEach(x=>x.classList.toggle('on',x===b));ncPaint(NC.cfgs.find(c=>c.id==='nc10'),J);}));
-  const dbFrom=document.getElementById('db-from'),dbTo=document.getElementById('db-to'),dbReset=document.getElementById('db-reset');
+  const dbFrom=document.getElementById('db-from'),dbTo=document.getElementById('db-to'),dbReset=document.getElementById('db-reset'),dbSource=document.getElementById('db-source');
   if(dbFrom&&dbTo){
     const onDBChange=()=>{const f=dbFrom.value,t=dbTo.value;if(!f||!t)return;DB_RANGE={from:f<=t?f:t,to:f<=t?t:f};renderNewChange();};
     dbFrom.addEventListener('change',onDBChange);dbTo.addEventListener('change',onDBChange);
     if(dbReset)dbReset.addEventListener('click',()=>{DB_RANGE={from:DBW.min,to:DBW.max};renderNewChange();});
   }
+  if(dbSource)dbSource.addEventListener('change',()=>{DB_SOURCE=dbSource.value;ncPaint(NC.cfgs.find(c=>c.id==='nc13'),J);});
   ncRenderChangeAnalysis(J);
 }
 
