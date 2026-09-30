@@ -239,6 +239,12 @@ function buildJourneyTrends(rows, dataMax, companyStatusMap, normCompany) {
       // unrecognized values (78 exist in the full history, none in the
       // currently-displayed window) and is not plotted on the chart.
       ss_ui: 0, ss_backoffice: 0, ss_android: 0, ss_android_s: 0, ss_ios: 0, ss_other: 0,
+      // Digital Booking: count of STB_Status = Booked_Full_STB applications,
+      // bucketed by BOOKING date (same convention as bk/bk_* above, NOT
+      // submission date like ss_* above), split by the same SubmitSource
+      // channels as ss_* -- added 2026-09-30 per explicit request for the
+      // "Digital Booking" New Change card.
+      db_ui: 0, db_backoffice: 0, db_android: 0, db_android_s: 0, db_ios: 0, db_other: 0,
       _si: [], _sa: [], _ei: [], _ea: [] };
     CS_KEYS.forEach(k => { days[d]['cs_' + k] = 0; days[d]['bk_cs_' + k] = 0; });
   }
@@ -247,6 +253,7 @@ function buildJourneyTrends(rows, dataMax, companyStatusMap, normCompany) {
   const BK_EMP = { 'Private Company': 'bk_private', 'Unlisted': 'bk_unlisted', 'Government Entity': 'bk_govt', 'Pension': 'bk_pension', 'Military with Grades': 'bk_military' };
   const DR = { 'DBR': 'dr_dbr', 'Loan Size Rule': 'dr_loansize', 'Inactive Company': 'dr_inactive', 'Minimum Income Rule': 'dr_minincome', 'SIMAH Rules': 'dr_simah' };
   const SS = { 'UI': 'ss_ui', 'backoffice': 'ss_backoffice', 'Android': 'ss_android', 'Android-S': 'ss_android_s', 'IOS-S': 'ss_ios' };
+  const SSD = { 'UI': 'db_ui', 'backoffice': 'db_backoffice', 'Android': 'db_android', 'Android-S': 'db_android_s', 'IOS-S': 'db_ios' };
   const pos = v => { const n = parseFloat(v); return n > 0 ? n : null; };
   for (const r of rows) {
     const sd = toYMD(r['submitted']);
@@ -301,6 +308,9 @@ function buildJourneyTrends(rows, dataMax, companyStatusMap, normCompany) {
         bd.bk++; bd.amt += parseFloat(r['ItemValue']) || 0;
         const bek = BK_EMP[String(r['FinalEmployerType'] || '').trim()]; if (bek) bd[bek]++;
         if (companyStatusMap) bd['bk_cs_' + companyStatusOf(r['Company'], companyStatusMap, normCompany)]++;
+        if (String(r['STB_Status'] || '').trim() === 'Booked_Full_STB') {
+          bd[SSD[String(r['SubmitSource'] || '').trim()] || 'db_other']++;
+        }
       }
     }
   }
